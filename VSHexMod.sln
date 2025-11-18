@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35913.81 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSHexMod", "VSHexMod\VSHexMod\VSHexMod.csproj", "{2CC74F84-8388-452C-A78E-9818A8955945}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeBuild", "VSHexMod\ZZCakeBuild\CakeBuild.csproj", "{E32D6135-753D-4869-B0C0-204B944FFF12}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2CC74F84-8388-452C-A78E-9818A8955945}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CC74F84-8388-452C-A78E-9818A8955945}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CC74F84-8388-452C-A78E-9818A8955945}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CC74F84-8388-452C-A78E-9818A8955945}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E32D6135-753D-4869-B0C0-204B944FFF12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E32D6135-753D-4869-B0C0-204B944FFF12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E32D6135-753D-4869-B0C0-204B944FFF12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E32D6135-753D-4869-B0C0-204B944FFF12}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {82AF5D0D-9793-4267-BDBB-EE43E2A00B73}
+	EndGlobalSection
+EndGlobal
