@@ -1,4 +1,5 @@
 ﻿
+using HarmonyLib;
 using ProtoBuf;
 using System.Collections.Generic;
 using System.IO;
@@ -10,9 +11,11 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 using VSHexMod.hexcasting.api.casting.eval;
 using VSHexMod.hexcasting.api.casting.math;
 using VSHexMod.hexcasting.client.gui;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace VSHexMod.Gui
 {
@@ -43,11 +46,17 @@ namespace VSHexMod.Gui
 
             //This creates a fixed position rectangle with a size of 300x100 pixels, and 40 pixels from the top of the gui box.
             ElementBounds textBounds = ElementBounds.Fixed(120, 20, 260, 355);
-
+            
             //Inventory Handling
             ElementBounds PaperBounds = ElementStdBounds.SlotGrid(EnumDialogArea.LeftMiddle, 60, -60, 1, 1);
             ElementBounds ScrollBounds = ElementStdBounds.SlotGrid(EnumDialogArea.LeftMiddle, 0, 1, 1, 1);
             ElementBounds OutputBounds = ElementStdBounds.SlotGrid(EnumDialogArea.LeftMiddle, 60, 60, 1, 1);
+
+            TextAreaConfig signConfig = new();
+            var font = CairoFont.TextInput().WithFontSize(signConfig.FontSize).WithFont(signConfig.FontName);
+            if (signConfig.BoldFont) font.WithWeight(Cairo.FontWeight.Bold);
+            font.LineHeightMultiplier = 0.9;
+            ElementBounds textAreaBounds = ElementBounds.Fixed(-10, 20, signConfig.MaxWidth - 40, signConfig.FontSize);
 
             //Buttons Handling
             ElementBounds cancelButtonBounds = ElementBounds.FixedSize(0, 0).WithAlignment(EnumDialogArea.LeftBottom).WithFixedPadding(8, 2).WithFixedAlignmentOffset(0, -25);
@@ -57,6 +66,7 @@ namespace VSHexMod.Gui
             bgBounds.BothSizing = ElementSizing.FitToChildren;
             bgBounds.WithChildren(textBounds);
 
+            ElementBounds clippingBounds = textBounds.FlatCopy();
             //Using the composer will actually create the dialog itself using the bounds supplied.
             SingleComposer = capi.Gui.CreateCompo("ListScriber" + bePos, dialogBounds)
                 //add the background...
@@ -65,7 +75,10 @@ namespace VSHexMod.Gui
                 .AddDialogTitleBar(Title, OnTitleBarCloseClicked)
                 //and finally add the text in the text box.
                 .BeginChildElements(bgBounds)
+                    .BeginClip(clippingBounds)
                     .AddHexGrid(textBounds, patterns)
+                    .EndClip()
+                    .AddTextArea(textAreaBounds, OnTextAreaChanged, font, "text")
                     .AddItemSlotGrid(Inventory, SendInvPacket, 1, new int[] { 0 }, PaperBounds, "paperslot")
                     .AddItemSlotGrid(Inventory, SendInvPacket, 1, new int[] { 1 }, ScrollBounds, "scrollslot")
                     .AddItemSlotGrid(Inventory, SendInvPacket, 1, new int[] { 2 }, OutputBounds, "outputslot")
@@ -107,6 +120,15 @@ namespace VSHexMod.Gui
         private void SendInvPacket(object packet)
         {
             capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, packet);
+        }
+        private void OnTextAreaChanged(string value)
+        {
+            byte[] o = new byte[value.Length];
+            for (int i = 0; i < value.Length; i++)
+            {
+                o[i] = (byte)value[i];
+            }
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, 3000, o);
         }
 
         private void OnTitleBarCloseClicked()

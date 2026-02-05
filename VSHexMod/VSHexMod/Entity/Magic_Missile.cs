@@ -33,6 +33,7 @@ namespace VSHexMod
         protected EntityPartitioning ep;
         protected List<long> entitiesHit = new();
         protected long FiredByMountEntityId;
+        protected byte[] lightHsv = new byte[] { 10, 5, 10 };
 
         public Entity FiredBy;
         public float Weight = 0.1f;
@@ -45,6 +46,11 @@ namespace VSHexMod
 
         public bool EntityHit { get; protected set; }
 
+
+        public override byte[] LightHsv
+        {
+            get { return lightHsv; }
+        }
         public bool NonCollectible
         {
             get { return Attributes.GetBool("nonCollectible"); }
@@ -64,6 +70,7 @@ namespace VSHexMod
         public override void Initialize(EntityProperties properties, ICoreAPI api, long InChunkIndex3d)
         {
             base.Initialize(properties, api, InChunkIndex3d);
+            lightHsv = properties.Attributes["lightHsv"].AsObject(new byte[] { 10, 5, 10 });
             if (Api.Side == EnumAppSide.Server)
             {
                 if (FiredBy != null)
@@ -208,7 +215,7 @@ namespace VSHexMod
 
         public void Explode(EntityPos pos)
         {
-            ((IServerWorldAccessor)World).CreateExplosion(pos.AsBlockPos, EnumBlastType.RockBlast, Math.Min(Math.Max(DamageTier - 2, 0) * 1.5, 31), Math.Min(Math.Max(DamageTier, 1) * 5, 31));
+            (World as IServerWorldAccessor)?.CreateExplosion(pos.AsBlockPos, EnumBlastType.RockBlast, Math.Min(Math.Max(DamageTier - 2, 0) * 1.5, 31), Math.Min(Math.Max(DamageTier, 1) * 5, 31));
             IBlockAccessor blockAcc = World.GetBlockAccessor(true, true, true);
 
             Entity[] targets = World.GetEntitiesAround(pos.XYZ, Math.Max(DamageTier, 1) * 5, Math.Max(DamageTier, 1) * 5, (e) => e != FiredBy);

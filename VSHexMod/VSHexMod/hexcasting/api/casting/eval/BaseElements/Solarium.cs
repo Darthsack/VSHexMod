@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using VSHexMod.EntityBehaviors;
 using VSHexMod.hexcasting.api.casting.eval.iota;
+using static System.Formats.Asn1.AsnWriter;
 using static VSHexMod.hexcasting.api.casting.arithmetic.operators.Spells;
 
 namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
@@ -71,6 +73,40 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
             }
 
             player.UseMedia(1);
+            return true;
+        }
+
+        public override bool Place(Entity player, Vec3d target)
+        {
+            if (!player.CanUseMedia(10))
+                return false;
+
+            IBlockAccessor blockAcc = player.World.GetBlockAccessor(true, true, true);
+            BlockPos bpos = new BlockPos((int)target.X, (int)target.Y, (int)target.Z);
+            Block block = blockAcc.GetBlock(bpos);
+
+            switch (block.BlockMaterial)
+            {
+                case EnumBlockMaterial.Stone:
+                    blockAcc.SetBlock(player.World.GetBlock(new AssetLocation("lava-still-7")).BlockId, bpos);
+                    break;
+                case EnumBlockMaterial.Air:
+                    blockAcc.SetBlock(player.World.GetBlock(new AssetLocation("fire")).BlockId, bpos);
+
+                    Vintagestory.API.Common.BlockEntity befire = blockAcc.GetBlockEntity(bpos);
+                    befire?.GetBehavior<BEBehaviorBurning>()?.OnFirePlaced(bpos, bpos, (player as EntityPlayer).PlayerUID);
+                    break;
+                //case EnumBlockMaterial.Liquid:
+                //    if(block.LiquidCode == "water")
+                //    {
+
+                //    }
+                //    break;
+                default:
+                    return false;
+            }
+
+            player.UseMedia(10);
             return true;
         }
     }

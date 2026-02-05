@@ -29,6 +29,8 @@ namespace VSHexMod.BlockEntity
 
         internal List<ResolvedPattern> hexpatterns = new List<ResolvedPattern>();
 
+        internal string title;
+
         public ScribeRecipe CurrentRecipe;
 
         GuiDialogBlockEntityListScriber clientDialog;
@@ -183,6 +185,15 @@ namespace VSHexMod.BlockEntity
 
                 InscribeSpell(Api, 0);
 
+            } 
+            else if (packetid == 3000)
+            {
+                string o = "";
+                foreach (char n in data)
+                {
+                    o += n;
+                }
+                title = o;
             }
         }
 
@@ -195,7 +206,7 @@ namespace VSHexMod.BlockEntity
 
             
 
-            if (!inventory.Slots[0].Itemstack.Item.Attributes.KeyExists("spell"))
+            if (inventory.Slots[0].Itemstack is null || !inventory.Slots[0].Itemstack.Item.Attributes.KeyExists("spell"))
                 if (!FindMatchingRecipe())
                     return false;
 
@@ -227,7 +238,8 @@ namespace VSHexMod.BlockEntity
             string[] att = hexpatterns.Select((r) => r.ToString()).ToArray();
 
             inventory.Slots[2].Itemstack.Attributes["spell"] = new StringArrayAttribute(att);
-            if(inventory.Slots[0].Itemstack.StackSize == 0)
+            inventory.Slots[2].Itemstack.Attributes["title"] = new StringAttribute(title);
+            if (inventory.Slots[0].Itemstack.StackSize == 0)
                 inventory.Slots[0].Itemstack = null;
             
             inventory.Slots[0].MarkDirty();

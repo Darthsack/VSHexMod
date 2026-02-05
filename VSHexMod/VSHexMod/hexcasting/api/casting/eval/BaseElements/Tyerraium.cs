@@ -1,14 +1,15 @@
-﻿using System;
+﻿using CompactExifLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
+using VSHexMod.EntityBehaviors;
 using VSHexMod.hexcasting.api.casting.eval.iota;
-using CompactExifLib;
 
 namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
 {
@@ -103,6 +104,51 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
                 }
             }
 
+            return true;
+        }
+
+        public override bool Effect(Entity player, Vec3d pos)
+        {
+            if (!player.CanUseMedia(10))
+                return false;
+            BlockPos block_pos = new BlockPos((int)pos.X, (int)pos.Y, (int)pos.Z);
+
+            //Vintagestory.API.Common.BlockEntity block = player.World.BlockAccessor.GetBlockEntity(block_pos);
+
+            IBlockAccessor blockAcc = player.World.GetBlockAccessor(true, true, true);
+
+            Block block = blockAcc.GetBlock(block_pos);
+
+            BlockEntityFarmland befarm = blockAcc.GetBlockEntity(block_pos) as BlockEntityFarmland;
+            if (befarm is not null)
+            {
+                befarm.TryGrowCrop(1);
+            }
+            else return false;
+
+            player.UseMedia(10);
+            return true;
+        }
+        public override bool Place(Entity player, Vec3d target)
+        {
+            if (!player.CanUseMedia(10))
+                return false;
+
+            IBlockAccessor blockAcc = player.World.GetBlockAccessor(true, true, true);
+            BlockPos bpos = new BlockPos((int)target.X, (int)target.Y, (int)target.Z);
+            Block block = blockAcc.GetBlock(bpos);
+
+            switch (block.BlockMaterial)
+            {
+                case EnumBlockMaterial.Air:
+                    return false;
+                default:
+                    blockAcc.BreakBlock(bpos, player as IPlayer);
+                    break;
+                    
+            }
+
+            player.UseMedia(10);
             return true;
         }
     }

@@ -8,7 +8,12 @@
     }
   ],
   "attributes": {
-    "isProjectile": true
+    "isProjectile": true,
+    "LightHsvByType": {
+      "*-solar": [ 4, 7, 10 ],
+      "*-stella": [ 4, 0, 10 ],
+      "*": [ 0, 0, 0 ]
+    }
   },
   "hitboxSize": {
     "x": 0.125,
@@ -18,7 +23,7 @@
     "size": 0.75,
     "renderer": "Shape",
     "shapeByType": {
-      "*": { "base": "game:entity/arrow/copper" }
+      "*": { "base": "game:entity/nonliving/projectile/arrow/copper" }
     },
     "texturesByType": {
       "*": {

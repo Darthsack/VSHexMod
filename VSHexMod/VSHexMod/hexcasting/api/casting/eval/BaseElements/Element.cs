@@ -94,7 +94,7 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
             return strength.ToString() +": "+ type;
         }
 
-        public static bool operator ==(Element a, Element b) => a.strength == b.strength && a.type != b.type;
+        public static bool operator ==(Element a, Element b) => a.strength == b.strength && a.type == b.type;
         public static bool operator !=(Element a, Element b) => a.strength != b.strength || a.type != b.type;
     }
 }

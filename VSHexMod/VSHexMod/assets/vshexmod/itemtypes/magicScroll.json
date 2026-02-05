@@ -1,7 +1,10 @@
 {
   "code": "scroll",
   "class": "vshexmod.item.hexbook",
-  "shape": { "base": "game:block/wood/crate/label-paper" },
+  "shapeByType": {
+    "*-unsealed": { "base": "game:block/wood/crate/label-paper" },
+    "*-sealed": { "base": "item/scroll-unbound" }
+  },
   "behaviors": [
     {
       "name": "GroundStorable",
@@ -22,6 +25,10 @@
     {
       "code": "type",
       "states": [ "parchment" ]
+    },
+    {
+      "code": "state",
+      "states": [ "sealed", "unsealed" ]
     }
   ],
   "attributes": {
@@ -77,76 +84,103 @@
   },
   "maxstacksize": 32,
   "materialDensity": 210,
-  "fpHandTransform": {
-    "translation": {
-      "x": 0.15,
-      "y": -0.5,
-      "z": 0
-    },
-    "rotation": {
-      "x": -25,
-      "y": -17,
-      "z": -16
-    },
-    "origin": {
-      "x": 0.5,
-      "y": 0.5,
-      "z": 0.1
-    },
-    "scale": 2.55
+  "fpHandTransformByType": {
+    "*-unsealed": {
+      "translation": {
+        "x": 0.15,
+        "y": -0.5,
+        "z": 0
+      },
+      "rotation": {
+        "x": -25,
+        "y": -17,
+        "z": -16
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5,
+        "z": 0.1
+      },
+      "scale": 2.55
+    }
   },
-  "tpHandTransform": {
-    "translation": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "rotation": {
-      "x": 5,
-      "y": 180,
-      "z": 1
-    },
-    "origin": {
-      "x": -0.8,
-      "y": -1.47,
-      "z": -0.39
-    },
-    "scale": 0.65
+  "tpHandTransformByType": {
+    "*-unsealed": {
+      "translation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 5,
+        "y": 180,
+        "z": 1
+      },
+      "origin": {
+        "x": -0.8,
+        "y": -1.47,
+        "z": -0.39
+      },
+      "scale": 0.65
+    }
+
   },
-  "groundTransform": {
-    "translation": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "rotation": {
-      "x": 90,
-      "y": 0,
-      "z": 2
-    },
-    "origin": {
-      "x": 0.5,
-      "y": 0.5,
-      "z": 0.08
-    },
-    "scale": 3.2
+  "groundTransformByType": {
+    "*-unsealed": {
+      "translation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 90,
+        "y": 0,
+        "z": 2
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5,
+        "z": 0.08
+      },
+      "scale": 3.2
+    }
   },
-  "guiTransform": {
-    "translation": {
-      "x": 0,
-      "y": 0,
-      "z": 0
+  "guiTransformByType": {
+    "*-unsealed": {
+      "translation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 42,
+        "y": 34,
+        "z": -33
+      },
+      "origin": {
+        "x": 0.53,
+        "y": 0.55,
+        "z": 0
+      },
+      "scale": 2.45
     },
-    "rotation": {
-      "x": 42,
-      "y": 34,
-      "z": -33
-    },
-    "origin": {
-      "x": 0.53,
-      "y": 0.55,
-      "z": 0
-    },
-    "scale": 2.45
+    "*-sealed": {
+      "translation": {
+        "x": 0,
+        "y": 36,
+        "z": 0
+      },
+      "rotation": {
+        "x": 27,
+        "y": 35,
+        "z": -38
+      },
+      "origin": {
+        "x": 0.5299,
+        "y": 0.55,
+        "z": 0
+      },
+      "scale": 2.4
+    }
   }
 }

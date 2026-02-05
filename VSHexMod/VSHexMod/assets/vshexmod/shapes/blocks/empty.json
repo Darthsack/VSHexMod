@@ -1,0 +1,56 @@
+﻿{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"torch-lit": "block/wood/torch/torch-lit"
+	},
+	"elements": [
+		{
+			"name": "Origin",
+			"from": [ 8.0, 0.0, 8.0 ],
+			"to": [ 8.0, 0.0, 8.0 ],
+			"rotationOrigin": [ 8.0, 0.0, 8.0 ],
+			"faces": {
+				"north": {
+					"texture": "#torch-lit",
+					"uv": [ 0.0, 0.0, 0.5, 0.5 ],
+					"enabled": false
+				},
+				"east": {
+					"texture": "#torch-lit",
+					"uv": [ 0.0, 0.0, 0.5, 0.5 ],
+					"enabled": false
+				},
+				"south": {
+					"texture": "#torch-lit",
+					"uv": [ 0.0, 0.0, 0.5, 0.5 ],
+					"enabled": false
+				},
+				"west": {
+					"texture": "#torch-lit",
+					"uv": [ 0.0, 0.0, 0.5, 0.5 ],
+					"enabled": false
+				},
+				"up": {
+					"texture": "#torch-lit",
+					"uv": [ 0.0, 0.0, 0.5, 0.5 ],
+					"enabled": false
+				},
+				"down": {
+					"texture": "#torch-lit",
+					"uv": [ 0.0, 0.0, 0.5, 0.5 ],
+					"enabled": false
+				}
+			},
+			"children": [
+				
+			]
+		}
+	]
+}
