@@ -1,0 +1,141 @@
+{
+  "code": "focus",
+  "class": "vshexmod.item.focus",
+  "variantgroups": [
+    {
+      "code": "gem",
+      "states": [ "emerald" ]
+    },
+    {
+      "code": "metal",
+      "states": [ "brass" ]
+    },
+    {
+      "code": "state",
+      "states": [ "sealed", "unsealed" ]
+    }
+  ],
+  "storageFlags": 257,
+  "attributes": {
+    "scrollrackable": true,
+    "displaycaseable": true,
+    "shelvable": true,
+    "iota": null,
+    "groundStorageTransform": {
+      "translation": {
+        "x": 0,
+        "y": -0.02,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": -30,
+        "z": 0
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.15,
+        "z": 0.5
+      },
+      "scale": 0.9
+    },
+    "onscrollrackTransform": {
+      "translation": {
+        "x": -0.45,
+        "y": -0.17,
+        "z": 0.5
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 90
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.1,
+        "z": 0.5
+      }
+    }
+  },
+  "shapeByType": {
+    "*-unsealed": { "base": "item/foci" },
+    "*-sealed": { "base": "item/scroll-unbound" }
+  },
+  "textures": {
+    "gem": { "base": "game:block/stone/gem/{gem}" },
+    "rings": { "base": "game:block/metal/sheet-plain/{metal}3" }
+  },
+  "creativeinventory": {
+    "general": [ "*" ],
+    "items": [ "*" ],
+    "hexcasting": [ "*" ]
+  },
+
+  "fpHandTransform": {
+    "translation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "rotation": {
+      "x": 1,
+      "y": 90,
+      "z": 0
+    },
+    "scale": 1.67
+  },
+  "guiTransform": {
+    "translation": {
+      "x": -9,
+      "y": 7,
+      "z": 0
+    },
+    "rotation": {
+      "x": 127,
+      "y": -31,
+      "z": 78
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.1,
+      "z": 0.5
+    },
+    "scale": 5.03
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -1.05,
+      "y": -0.19,
+      "z": -0.77
+    },
+    "rotation": {
+      "x": -48,
+      "y": -180,
+      "z": -86
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.12,
+      "z": 0.5
+    },
+    "scale": 0.6
+  },
+  "groundTransform": {
+    "translation": {
+      "x": 0,
+      "y": 0.15,
+      "z": 0
+    },
+    "rotation": {
+      "x": 0,
+      "y": 0,
+      "z": 90
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 6
+  }
+}

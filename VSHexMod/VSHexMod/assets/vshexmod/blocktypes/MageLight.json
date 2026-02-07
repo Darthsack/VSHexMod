@@ -20,7 +20,7 @@
   "blockmaterial": "Glass",
   //"faceCullMode": "MergeMaterial",
   "replaceable": 5001,
-  "LightHsv": [ 50, 100, 20 ],
+  "LightHsv": [ 50, 3, 20 ],
   "lightAbsorption": 0,
   //"renderPass": "Transparent",
   "vertexFlags": {

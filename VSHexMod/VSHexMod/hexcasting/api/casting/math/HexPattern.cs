@@ -2,10 +2,12 @@
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -193,6 +195,39 @@ namespace VSHexMod.hexcasting.api.casting.math
             }
             //capi.Logger.Event("outputing: " + output.anglesSignature());
             return output;
+        }
+
+        public void ToBytes(BinaryWriter writer)
+        {
+            writer.Write((byte)startDir.Direction);
+            writer.Write7BitEncodedInt(angles.Length);
+            for (int i = 0; i < angles.Length; i += 2)
+            {
+                EnumHexAngle angle1 = angles[i].Angle;
+                EnumHexAngle angle2 = angles.Length <= i + 1 ? 0 : angles[i + 1].Angle;
+
+                byte writen = (byte)(((byte)angle1 << 4) | (byte)angle2);
+
+                writer.Write(writen);
+            }
+        }
+
+        public void FromBytes(BinaryReader reader, IWorldAccessor resolver)
+        {
+            HexDir startDir = new HexDir((EnumHexDir)reader.ReadByte());
+            HexPattern pattern = new HexPattern(startDir, new HexAngle[reader.Read7BitEncodedInt()]);
+
+            for (int i = 0; i < pattern.angles.Length; i += 2)
+            {
+                byte Currentbyte = reader.ReadByte();
+                pattern.angles[i] = new HexAngle((EnumHexAngle)(Currentbyte >> 4));
+                if (pattern.angles.Length > i + 1)
+                {
+                    pattern.angles[i + 1] = new HexAngle((EnumHexAngle)(Currentbyte & 15));
+                }
+            }
+            startD = pattern.startDir;
+            angles = pattern.angles;
         }
 
     }

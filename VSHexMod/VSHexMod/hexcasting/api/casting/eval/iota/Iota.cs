@@ -1,6 +1,8 @@
 ﻿using Cairo;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +16,7 @@ using VSHexMod.hexcasting.api.casting.math;
 namespace VSHexMod.hexcasting.api.casting.eval.iota
 {
     
-    public abstract class Iota 
+    public class Iota
     {
         protected object payload;
         protected Type type;
@@ -25,19 +27,23 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
             return payload.ToString();
         }
 
-        protected Iota(Type type, Object payload)
+        protected Iota(Type type, Object payload) 
         {
             this.type = type;
             this.payload = payload;
+        }
+        public Iota()
+        {
+
         }
 
         public Type getType() {
             return this.type;
         }
 
-        abstract public bool isTruthy();
+        public virtual bool isTruthy() => false;
 
-        abstract public bool toleratesOther(Iota that);
+        public virtual bool toleratesOther(Iota that) => false;
 
         public virtual CastResult execute(Entity player, ICoreAPI api, State Current)
         {
@@ -77,6 +83,24 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
         public virtual bool executable()
         {
             return false;
+        }
+
+        public virtual Iota Copy()
+        {
+            return new Iota(type,payload);
+        }
+
+        public virtual void ToBytes(BinaryWriter writer, ICoreAPI api)
+        {
+            writer.Write(api.GetIotaKey(this));
+        }
+
+        public virtual Iota FromBytes(BinaryReader reader, IWorldAccessor resolver)
+        {
+            Iota type = resolver.Api.GetEmptyIota(reader.ReadString());
+            Iota o = type.FromBytes(reader, resolver);
+
+            return o;
         }
 
         public static bool operator ==(Iota a, Iota b) => a.toleratesOther(b);

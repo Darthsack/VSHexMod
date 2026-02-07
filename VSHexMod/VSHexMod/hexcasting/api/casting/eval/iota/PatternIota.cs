@@ -25,6 +25,9 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
         public PatternIota(HexPattern pattern) : base(typeof(IotaType<PatternIota>), pattern)
         {
         }
+        public PatternIota() : base(typeof(IotaType<PatternIota>), new HexPattern(HexDir.EAST))
+        {
+        }
 
         public HexPattern getPattern()
         {
@@ -201,5 +204,23 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
         {
             return true;
         }
+
+        public override void ToBytes(BinaryWriter writer, ICoreAPI api)
+        {
+            writer.Write(api.GetIotaKey(this));
+
+            HexPattern val = getPattern();
+            val.ToBytes(writer);
+        }
+
+        public override Iota FromBytes(BinaryReader reader, IWorldAccessor resolver)
+        {
+            HexPattern val = new(HexDir.EAST);
+            val.FromBytes(reader, resolver);
+            payload = val;
+
+            return new PatternIota(val);
+        }
+
     }
 }

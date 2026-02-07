@@ -55,6 +55,8 @@ namespace VSHexMod
 
         ICoreAPI api;
 
+        public HexIotaTypes IotaTypesReg;
+
         public Dictionary<string, Type> HexRegistry = new Dictionary<string, Type>();
         public void RegisterHex(string signiture, Type eval)
         {
@@ -77,6 +79,7 @@ namespace VSHexMod
             api.RegisterBlockClass(Mod.Info.ModID + ".block.listscriber", typeof(BlockListScriber));
             api.RegisterBlockEntityClass(Mod.Info.ModID + ".blockentity.listscriber", typeof(BEListScriber));
             api.RegisterItemClass(Mod.Info.ModID + ".item.hexbook", typeof(ItemHexBook));
+            api.RegisterItemClass(Mod.Info.ModID + ".item.focus", typeof(Focus));
             api.RegisterEntityBehaviorClass("media", typeof(BehaviorMedia));
 
             api.RegisterEntity("Magic_Missile", typeof(Magic_Missile));
@@ -85,7 +88,8 @@ namespace VSHexMod
             api.Network.RegisterChannel("StartMedia").RegisterMessageType<StartMediaBar>().RegisterMessageType<UseMedia>();
 
             RegisterBaseHexxes();
-            RegisterBaseIota();
+
+            IotaTypesReg = new(api);
 
         }
 
@@ -169,18 +173,6 @@ namespace VSHexMod
         {
             Spells.RegisterArithmetic(api);
         }
-        private void RegisterBaseIota()
-        {
-            RegisterIota("null", typeof(IotaType<NullIota>));
-            RegisterIota("double", typeof(IotaType<DoubleIota>));
-            RegisterIota("boolean", typeof(IotaType<BoolIota>));
-            RegisterIota("entity", typeof(IotaType<EntityIota>));
-            RegisterIota("list", typeof(IotaType<ListIota>));
-            RegisterIota("pattern", typeof(IotaType<PatternIota>));
-            //RegisterIota("garbage", typeof(IotaType<GarbageIota>));
-            RegisterIota("vec3", typeof(IotaType<Vec3Iota>));
-            //RegisterIota("continuation", typeof(IotaType<ContinuationIota>));
-        }
     }
     public static partial class apiHelper
     {
@@ -189,9 +181,19 @@ namespace VSHexMod
             api.ModLoader.GetModSystem<VSHexModModSystem>().RegisterHex(signiture, eval);
         }
 
-        public static void RegisterIota(this ICoreAPI api, string key, Type type)
+        public static void RegisterIota(this ICoreAPI api, string key, Iota type)
         {
-            api.ModLoader.GetModSystem<VSHexModModSystem>().RegisterIota(key, type);
+            api.ModLoader.GetModSystem<VSHexModModSystem>().IotaTypesReg.registerType(key, type);
+        }
+
+        public static Iota GetEmptyIota(this ICoreAPI api, string key)
+        {
+            return api.ModLoader.GetModSystem<VSHexModModSystem>().IotaTypesReg.type(key);
+        }
+
+        public static string GetIotaKey(this ICoreAPI api, Iota key)
+        {
+            return api.ModLoader.GetModSystem<VSHexModModSystem>().IotaTypesReg.getKey(key);
         }
 
     }

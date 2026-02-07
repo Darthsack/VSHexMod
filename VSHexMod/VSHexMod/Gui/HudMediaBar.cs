@@ -65,23 +65,21 @@ namespace VSHexMod.Gui
                 Alignment = EnumDialogArea.CenterBottom,
                 BothSizing = ElementSizing.Fixed,
                 fixedWidth = width,
-                fixedHeight = 100,
-                fixedY = -5,
-                fixedX = 124.5
+                fixedHeight = 10,
+                fixedY = -75,
+                fixedX = 424
             }.WithFixedAlignmentOffset(0, 5);
 
             ElementBounds mediaBarBounds = ElementBounds.Fixed(0, 0, width, 10);
-
+            dialogBounds.WithChildren(mediaBarBounds);
             ITreeAttribute mediaTree = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("health");
             string key = "mediabar-" + capi.World.Player.PlayerUID;
             Composers["mediabar"] =
                 capi.Gui
-                .CreateCompo(key, dialogBounds.FlatCopy().FixedGrow(width, 20))
-                .BeginChildElements(dialogBounds)
+                .CreateCompo(key, dialogBounds.FixedGrow(width, 20))
                     .AddIf(mediaTree != null)
                         .AddInvStatbar(mediaBarBounds, new double[] { 0.5,0,0.7 }, "mediastatbar")
                     .EndIf()
-                .EndChildElements()
                 .Compose()
             ;
 

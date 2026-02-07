@@ -1,25 +1,27 @@
-﻿using System;
+﻿using Cairo;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Vintagestory.API.Common.Entities;
-using Vintagestory.API.Common;
-using VSHexMod.hexcasting.api.casting.eval.iota;
-using VSHexMod.hexcasting.api.casting.eval;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Client;
-using Cairo;
-using System.Collections;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static VSHexMod.hexcasting.api.casting.arithmetic.operators.Spells;
+using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
-using Vintagestory.Server;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
+using Vintagestory.Server;
 using VSHexMod.EntityBehaviors;
+using VSHexMod.hexcasting.api.casting.eval;
 using VSHexMod.hexcasting.api.casting.eval.BaseElements;
-using System.ComponentModel;
+using VSHexMod.hexcasting.api.casting.eval.iota;
+using VSHexMod.hexcasting.common.items.magic;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Vintagestory.Server.Timer;
+using static VSHexMod.hexcasting.api.casting.arithmetic.operators.Spells;
 
 namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 {
@@ -66,7 +68,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             api.RegisterHex("wqaeaqw", typeof(Replace)); // Surgeon's Exaltation (list, num, any → list)
             api.RegisterHex("ddewedd", typeof(Cons)); // Flock's Gambit (many, num → list)
             api.RegisterHex("aaqwqaa", typeof(UnCons)); // Flock's Disintegration (list → many)
-            // Vacant Reflection (→ list)
+            api.RegisterHex("qqaeaae", typeof(EMPTY_LIST)); // Vacant Reflection (→ list)
             // Single's Purification (any → list)
             // Speaker's Distillation (list, any → list)
             // Speaker's Decomposition (list → list, any)
@@ -96,9 +98,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
             api.RegisterHex("deaqq", typeof(Eval)); // Hermes' Gambit ([pattern] | pattern → many)
             // Iris' Gambit ([pattern] | pattern → many)
-            // Thoth's Gambit (list of patterns, list → list)
+            api.RegisterHex("dadad", typeof(FOR_EACH)); // Thoth's Gambit (list of patterns, list → list)
             // Charon's Gambit
             // Thanatos' Reflection (→ number)
+
+            // Read and Write
+
+            api.RegisterHex("aqqqqq", typeof(Read));
+            api.RegisterHex("deeeee", typeof(Write));
 
             // Basics
 
@@ -1022,6 +1029,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     result.getSound()*/);
             }
         }
+        public class EMPTY_LIST : OperatorBase
+        {
+            public EMPTY_LIST(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            {
+                stack.Push(new ListIota());
+                castResult = new CastResult(
+                    new ListIota(new List<Iota>() { }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
+            }
+        }
+
 
         //Boolian Logic,Comparisons, & Sets
 
@@ -1466,6 +1486,100 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     result.getSound()*/);
 
 
+            }
+        }
+        public class FOR_EACH : OperatorBase
+        {
+            public FOR_EACH(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            {
+                stack.stack.TryPop(out Iota list);
+                stack.stack.TryPop(out Iota Patterns);
+                if (list is not ListIota || Patterns is not ListIota)
+                {
+                    castResult = new CastResult(
+                        new ListIota(new List<Iota>() { list , Patterns }),
+                        stack,
+                        ResolvedPatternType.ERRORED/*,
+                        result.getSound()*/);
+                    return;
+                }
+
+                foreach(Iota i in ((ListIota)list).getList())
+                {
+                    State inner = new(i);
+                    inner.evals = stack.evals;
+                    inner.Push(Patterns);
+                    Eval n = new Eval(player, api, inner);
+                    stack.Push(inner.Open());
+                    if (!n.castResult.resolutionType.success)
+                    {
+                        castResult = n.castResult;
+                        
+                        return;
+                    }
+                    stack.evals = inner.evals;
+                }
+
+                castResult = new CastResult(
+                    new ListIota(new List<Iota>() { list }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
+            }
+        }
+
+
+        //Read and Write
+
+        public class Read : OperatorBase
+        {
+            public Read(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            {
+                ItemStack Offhand = ((EntityPlayer)player)?.Player.InventoryManager?.OffhandHotbarSlot?.Itemstack;
+                if (Offhand is not null)
+                {
+                    stack.Push(((Focus)Offhand.Item)?.GetIota(Offhand));
+                }
+                else
+                {
+                    castResult = new CastResult(
+                        new ListIota(new List<Iota>() { }),
+                        stack,
+                        ResolvedPatternType.ERRORED/*,
+                        result.getSound()*/);
+                    return;
+                }
+                castResult = new CastResult(
+                        new ListIota(new List<Iota>() { }),
+                        stack,
+                        ResolvedPatternType.EVALUATED/*,
+                        result.getSound()*/);
+            }
+        }
+        public class Write : OperatorBase
+        {
+            public Write(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            {
+                Iota Data = stack.Pop();
+                if (Data is not null)
+                {
+                    ItemStack Offhand = ((EntityPlayer)player)?.Player.InventoryManager?.OffhandHotbarSlot?.Itemstack;
+                    ((Focus)Offhand.Item)?.SetIota(Data, Offhand);
+                }
+                else
+                {
+                    castResult = new CastResult(
+                        new ListIota(new List<Iota>() { Data }),
+                        stack,
+                        ResolvedPatternType.ERRORED/*,
+                        result.getSound()*/);
+                    return;
+                }
+                castResult = new CastResult(
+                        new ListIota(new List<Iota>() { Data }),
+                        stack,
+                        ResolvedPatternType.EVALUATED/*,
+                        result.getSound()*/);
             }
         }
 
@@ -2488,6 +2602,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
             }
         }
+
+
         // Extra Spells 
         /*public class Ignite : OperatorBase
         {

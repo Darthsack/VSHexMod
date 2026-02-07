@@ -61,6 +61,10 @@ namespace VSHexMod.hexcasting.api.casting.eval
         {
             return Element;
         }
+        public ListIota Open()
+        {
+            return new ListIota(stack.ToList());
+        }
 
         public static bool operator ==(State s, int i) => (s.evals == i);
         public static bool operator !=(State s, int i) => (s.evals != i);
