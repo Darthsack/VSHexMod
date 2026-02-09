@@ -23,6 +23,9 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
             this.strength = strength;
             this.type = type;
         }
+        public Element()
+        {
+        }
 
         public virtual bool Effect(Entity player, Entity target) { 
             return false;

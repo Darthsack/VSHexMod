@@ -123,7 +123,7 @@ namespace VSHexMod.BlockEntity
 
         private bool FindMatchingRecipe()
         {
-            ItemSlot[] inputSlots = new ItemSlot[] { inventory[0], inventory[1] };
+            ItemSlot[] inputSlots =  { paperSlot, outputSlot };
             CurrentRecipe = null;
 
             foreach (var recipe in Api.GetScribeRecipes())
@@ -202,7 +202,7 @@ namespace VSHexMod.BlockEntity
             if (inventory.Slots[2]?.Itemstack?.StackSize is not null && inventory.Slots[2].Itemstack.StackSize != 0)
                 return false;
 
-            api.Logger.Event(inventory?.Slots[0]?.Itemstack?.Item?.Attributes?["spell"].ToString());
+            //api.Logger.Event(inventory?.Slots[0]?.Itemstack?.Item?.Attributes?["spell"].ToString());
 
             
 
@@ -239,7 +239,7 @@ namespace VSHexMod.BlockEntity
 
             inventory.Slots[2].Itemstack.Attributes["spell"] = new StringArrayAttribute(att);
             inventory.Slots[2].Itemstack.Attributes["title"] = new StringAttribute(title);
-            if (inventory.Slots[0].Itemstack.StackSize == 0)
+            if (inventory.Slots[0].Itemstack?.StackSize == 0)
                 inventory.Slots[0].Itemstack = null;
             
             inventory.Slots[0].MarkDirty();

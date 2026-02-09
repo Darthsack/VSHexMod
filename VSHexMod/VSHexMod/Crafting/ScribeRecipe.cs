@@ -69,40 +69,39 @@ namespace VSHexMod.Crafting
             mixedStack.StackSize = 1;
 
 
-            // Carry over freshness
 
-            ItemStack remainStack = null;
-            foreach (var val in matched)
-            {
-                if (val.Value.Quantity != null)
-                {
-                    remainStack = val.Key.Itemstack;
-                    remainStack.StackSize -= (int)val.Value.Quantity * (mixedStack.StackSize / Output.StackSize);
-                    if (remainStack.StackSize <= 0)
-                    {
-                        remainStack = null;
-                    }
-                    break;
-                }
-            }
+            //ItemStack remainStack = null;
+            //foreach (var val in matched)
+            //{
+            //    if (val.Value.Quantity != null)
+            //    {
+            //        remainStack = val.Key.Itemstack;
+            //        remainStack.StackSize -= (int)val.Value.Quantity * (mixedStack.StackSize / Output.StackSize);
+            //        if (remainStack.StackSize <= 0)
+            //        {
+            //            remainStack = null;
+            //        }
+            //        break;
+            //    }
+            //}
 
             // Slot 0: Input slot
             // Slot 1: Output slot
 
-            inputslots[0].Itemstack = mixedStack;
-            inputslots[2].Itemstack = remainStack;
+            inputslots[0].TakeOut(1);
+            inputslots[1].Itemstack = mixedStack;
             
             
 
             inputslots[0].MarkDirty();
-            inputslots[2].MarkDirty();
+            inputslots[1].MarkDirty();
 
             return true;
         }
 
         List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> pairInput(ItemSlot[] inputStacks)
         {
-            List<CraftingRecipeIngredient> ingredientList = new List<CraftingRecipeIngredient>(Ingredients);
+            List<CraftingRecipeIngredient> ingredientList = new(Ingredients);
 
 
             Queue<ItemSlot> inputSlotsList = new Queue<ItemSlot>();
@@ -120,7 +119,7 @@ namespace VSHexMod.Crafting
                 for (int i = 0; i < ingredientList.Count; i++)
                 {
                     CraftingRecipeIngredient ingred = ingredientList[i];
-
+                    var n = ingred.ResolvedItemstack;
                     if (ingred.SatisfiesAsIngredient(inputSlot.Itemstack))
                     {
                         matched.Add(new KeyValuePair<ItemSlot, CraftingRecipeIngredient>(inputSlot, ingred));
@@ -159,18 +158,18 @@ namespace VSHexMod.Crafting
         public void FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {
             Code = reader.ReadString();
-            Ingredients = new ScribeRecipeIngredient[reader.ReadInt32()];
+            Ingredients = new CraftingRecipeIngredient[reader.ReadInt32()];
 
             for (int i = 0; i < Ingredients.Length; i++)
             {
-                Ingredients[i] = new ScribeRecipeIngredient();
+                Ingredients[i] = new CraftingRecipeIngredient();
                 Ingredients[i].FromBytes(reader, resolver);
-                Ingredients[i].Resolve(resolver, "Barrel Recipe (FromBytes)");
+                Ingredients[i].Resolve(resolver, "Scribe Recipe (FromBytes)");
             }
 
             Output = new ScribeOutputStack();
             Output.FromBytes(reader, resolver.ClassRegistry);
-            Output.Resolve(resolver, "Barrel Recipe (FromBytes)");
+            Output.Resolve(resolver, "Scribe Recipe (FromBytes)");
 
         }
 
@@ -234,6 +233,12 @@ namespace VSHexMod.Crafting
         {
             bool ok = true;
 
+            foreach(CraftingRecipeIngredient ingr in Ingredients)
+            {
+                ok = ingr.Resolve(world, sourceForErrorLogging);
+                if(!ok) break;
+            }
+            if(ok) Output.Resolve(world, sourceForErrorLogging);
             return ok;
         }
 

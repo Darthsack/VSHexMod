@@ -104,7 +104,7 @@ namespace VSHexMod
         private void Event_PlayerNowPlaying(IServerPlayer byPlayer)
         {
             bool b = false;
-            if (!byPlayer.Entity.HasBehavior<BehaviorMedia>())
+            if (byPlayer.Entity.WatchedAttributes.GetTreeAttribute("media") != null || byPlayer.Entity.HasBehavior<BehaviorMedia>())
             {
                 BehaviorMedia media = new(byPlayer.Entity);
                 media.Initialize();
@@ -127,7 +127,17 @@ namespace VSHexMod
         {
             //fromPlayer.SendMessage(0, "I see you!",EnumChatType.OwnMessage);
 
-            
+            if (!fromPlayer.Entity.HasBehavior<BehaviorMedia>())
+            {
+                BehaviorMedia media = new(fromPlayer.Entity);
+                media.Initialize();
+                fromPlayer.Entity.AddBehavior(media);
+                fromPlayer.BroadcastPlayerData();
+                ServerCoreAPI sapi = api as ServerCoreAPI;
+                sapi.Network.GetChannel("StartMedia").SendPacket(new StartMediaBar() { behaviorLoaded = true }, fromPlayer);
+            }
+
+
             //fromPlayer.SendMessage(0, string.Join(",", packet.spell),EnumChatType.OwnMessage);
             api.Logger.Event("StackSize: " + fromPlayer.Entity.ActiveHandItemSlot.Itemstack?.StackSize);
             
@@ -159,14 +169,19 @@ namespace VSHexMod
             ClientCoreAPI capi = api as ClientCoreAPI;
             IClientPlayer byPlayer = capi.World.Player;
 
-            if (!byPlayer.Entity.HasBehavior<BehaviorMedia>())
+            if (packet.behaviorLoaded && !byPlayer.Entity.HasBehavior<BehaviorMedia>())
             {
                 BehaviorMedia media = new(byPlayer.Entity);
                 media.Initialize();
                 byPlayer.Entity.AddBehavior(media);
+
             }
-            mediaBar = new HudMediaBar(capi);
-            mediaBar.ComposeGuis();
+            if (packet.behaviorLoaded && mediaBar is null)
+            {
+                mediaBar = new HudMediaBar(capi);
+                mediaBar.ComposeGuis();
+            }
+
 
         }
         private void RegisterBaseHexxes()

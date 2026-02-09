@@ -266,7 +266,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
-                if ((a is not DoubleIota && b is not DoubleIota) && (a is not Vec3Iota && b is not Vec3Iota))
+                if ((a is null || b is null) || (a is not DoubleIota && b is not DoubleIota) && (a is not Vec3Iota && b is not Vec3Iota))
                 {
                     castResult = new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
@@ -2248,7 +2248,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota num = stack.Pop();
                 Iota any = stack.Pop();
 
-                if (num is null || any is null || num is not DoubleIota || ((DoubleIota)num).getDouble() > stack.stack.Count())
+                if (num is null || any is null || num is not DoubleIota)
                 {
                     castResult = new CastResult(
                         new ListIota(new List<Iota>() { num, any }),
@@ -2262,6 +2262,12 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(any);
                 }
+
+                castResult = new CastResult(
+                    new ListIota(new List<Iota>() { num, any }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
 
             }
         }
@@ -2555,10 +2561,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 if (e is Vec3Iota vec)
                 {
-                    suc = stack.Shift().Place(player, vec.getVec3());
+                    if (player.CanUseMedia(10 * ((float)stack.exp)))
+                        suc = stack.Shift().Place(player, vec.getVec3());
                 }
                 if (suc)
                 {
+                    player.UseMedia(10 * ((float)stack.exp));
+                    stack.inc();
                     castResult = new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
@@ -2567,7 +2576,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 else
                 {
                     castResult = new CastResult(
-                        new ListIota(new List<Iota>() { e }),
+                        new ListIota(new List<Iota>() { e, new DoubleIota(Math.Round(player.GetMedia(), 2))}),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
@@ -2580,13 +2589,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             {
                 bool suc = false;
 
-                if (player.CanUseMedia(stack.Shift().strength * 5))
+                if (player.CanUseMedia(stack.Shift().strength * 5 * ((float)stack.exp)))
                     suc = stack.Shift().Project(player);
                 
                 
                 if (suc)
                 {
-                    player.UseMedia(stack.Shift().strength * 5);
+                    player.UseMedia(stack.Shift().strength * 5 * ((float)stack.exp));
+                    stack.inc();
                     castResult = new CastResult(
                         new ListIota(new List<Iota>() {  }),
                         stack,

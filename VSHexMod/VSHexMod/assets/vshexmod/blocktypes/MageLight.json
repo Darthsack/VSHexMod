@@ -246,14 +246,8 @@
     }
   ],
   "sounds": {
-    "place": "player/buildhigh",
-    "break": "block/glass",
-    "hit": "block/glass",
-    "walk": "walk/glass*",
-    "ambient": "environment/rainwindow",
-    "ambientBlockCount": 4,
-    "ambientSoundType": "Weather",
-    "ambientMaxDistanceMerge": 1
+    "place": "game:player/buildhigh",
+    "break": "game:block/glass"
   },
   "drops": [],
   "groundTransform": {

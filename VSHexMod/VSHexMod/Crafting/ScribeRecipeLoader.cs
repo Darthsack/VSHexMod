@@ -52,6 +52,7 @@ namespace VSHexMod.Crafting
             {
                 if (val.Value is JObject)
                 {
+                    var test = val.Value.ToObject<T>(val.Key.Domain);
                     LoadGenericRecipe(name, val.Key, val.Value.ToObject<T>(val.Key.Domain), RegisterMethod, ref quantityRegistered, ref quantityIgnored);
                     recipeQuantity++;
                 }

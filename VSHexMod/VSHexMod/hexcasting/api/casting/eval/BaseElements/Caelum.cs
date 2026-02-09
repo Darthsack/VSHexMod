@@ -17,8 +17,6 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
 
         public override bool Place(Entity player, Vec3d target)
         {
-            if (!player.CanUseMedia(10))
-                return false;
 
             //IBlockAccessor blockAcc = player.World.GetBlockAccessor(true, true, true);
             //BlockPos bpos = new BlockPos((int)target.X, (int)target.Y, (int)target.Z);
@@ -27,7 +25,6 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
 
             weatherSys.SpawnLightningFlash(target);
 
-            player.UseMedia(10);
             return true;
         }
     }

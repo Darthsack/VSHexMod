@@ -1,4 +1,11 @@
 {
-  "block-leatherscribetable": "Leather Scribe Table",
+  "tabname-hexcasting": "HexCasting",
+
+  "block-leatherscribetable-*": "Leather Scribe Table",
+  "block-mageblock": "Hexblock",
+  "block-magelight": "Hexlight",
+
+  "item-focus-*": "Focus",
+  "item-scroll-*": "Unnamed Spell",
   "Scribebench": "Scribe Bench"
 }

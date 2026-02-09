@@ -2,20 +2,31 @@
   "code": "leatherscribetable",
   "class": "vshexmod.block.listscriber",
   "entityClass": "vshexmod.blockentity.listscriber",
-  "behaviorsByType": {
-  "*": [ { "name": "Container" } ]
-  },
+  "behaviors": [
+    { "name": "HorizontalOrientable" },
+    { "name": "Container" }
+  ],
+  "variantgroups": [
+		{ "code":"side", "loadFromProperties": "abstract/horizontalorientation" }
+	],
   "blockmaterial": "wood",
   "creativeinventory": {
-    "general": [ "*" ],
-    "hexcasting": [ "*" ]
+    "general": [ "*-south" ],
+    "hexcasting": [ "*-south" ]
+  },
+  "shapebytype": {
+    "*-north": { "base": "blocks/scribe-bench" , "rotateY": 0},
+    "*-west": { "base": "blocks/scribe-bench" , "rotateY": 90},
+    "*-south": { "base": "blocks/scribe-bench" , "rotateY": 180},
+    "*-east": { "base": "blocks/scribe-bench" , "rotateY": 270 }
   },
 
+  "sideopaque": { "all": false },
+  "sidesolid": { "all": false },	
+  //"textures": {
 
-  "texture": {
-    "base": "game:block/wood/treetrunk/oak"
-  },
-
+  //},
+  "materialDensity": 400,
   "sounds": {
     "place": "game:block/planks",
     "walk": "game:walk/wood",
@@ -25,5 +36,17 @@
   "combustibleProps": {
     "burnTemperature": 800,
     "burnDuration": 98
+  },
+  "collisionboxbytype": {
+    "*-north": { "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 0.7  },
+    "*-west": { "x1": 0, "y1": 0, "z1": 0, "x2": 0.7, "y2": 1, "z2": 1 },
+    "*-south": { "x1": 0, "y1": 0, "z1": 0.3, "x2": 1, "y2": 1, "z2": 1 },
+    "*-east": { "x1": 0.3, "y1": 0, "z1": 0 , "x2": 1, "y2": 1, "z2": 1}
+  },
+  "selectionboxbytype": {
+    "*-north": { "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 1, "z2": 0.7  },
+    "*-west": { "x1": 0, "y1": 0, "z1": 0, "x2": 0.7, "y2": 1, "z2": 1 },
+    "*-south": { "x1": 0, "y1": 0, "z1": 0.3, "x2": 1, "y2": 1, "z2": 1 },
+    "*-east": { "x1": 0.3, "y1": 0, "z1": 0 , "x2": 1, "y2": 1, "z2": 1}
   }
 }

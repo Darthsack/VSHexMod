@@ -12,7 +12,15 @@ namespace VSHexMod.hexcasting.api.casting.eval
     {
         public Stack<Iota> stack;
         public int evals;
-        public Element Element = new Solarium(5);
+        public Element Element = new();
+        public double exp = 1;
+        private double mult = 1.5;
+
+        public void inc()
+        {
+            exp *= mult;
+        }
+
         public State()
         {
             this.stack = new Stack<Iota>();
