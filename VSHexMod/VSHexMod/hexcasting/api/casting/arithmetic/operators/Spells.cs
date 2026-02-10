@@ -2643,7 +2643,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             public Project(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
             {
                 bool suc = false;
-                EnumHexStrain pain = (EnumHexStrain)Math.Clamp((stack.Shift().strength - player.GetAffinities()[stack.Shift().type] - 1) / 5 , 0, 2);
+                EnumHexStrain pain = (EnumHexStrain)Math.Clamp((stack.Shift().strength - player.GetAffinities(stack.Shift().type)) / 5 , 0, 2);
 
                 if (player.CanUseMedia(stack.Shift().strength * 5 * ((float)stack.exp), stack.Shift().type, pain))
                     suc = stack.Shift().Project(player);

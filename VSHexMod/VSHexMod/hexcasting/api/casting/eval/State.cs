@@ -63,7 +63,7 @@ namespace VSHexMod.hexcasting.api.casting.eval
         }
         public void Shift(Element E)
         {
-            E.strength = GameMath.Min(GameMath.Max(GetMaxPower(E.type),BaseMax,1), E.strength);
+            E.strength = Math.Min(GetMaxPower(E.type) + BaseMax, E.strength); 
             Element = E;
         }
 

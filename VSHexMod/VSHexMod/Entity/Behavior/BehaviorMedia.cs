@@ -19,6 +19,7 @@ using VSHexMod.hexcasting.api.casting.eval;
 using static VSHexMod.VSHexModModSystem;
 using Vintagestory.GameContent;
 using VSHexMod.hexcasting.api.casting.eval.BaseElements;
+using HarmonyLib;
 
 namespace VSHexMod.EntityBehaviors
 {
@@ -61,21 +62,23 @@ namespace VSHexMod.EntityBehaviors
 
         public Dictionary<string,int> GetAffinities()
         {
-            string[] Keys = (string[])Affinities.Select((x)=>x.Key);
+            string[] Keys = Array.Empty<string>();
+            Affinities.Foreach((x) => Keys = Keys.AddToArray(x.Key));
             Dictionary<string, int> temp = new();
 
             foreach (string key in Keys) {
-                temp.Add(key, Affinities.GetVec3i(key).X);
+                if (key.Last() == 'X')
+                    temp.Add(key.SkipLast(1).Join(delimiter: ""), Affinities.GetInt(key));
             }
             return temp;
         }
         public int GetAffinities(string element)
         {
-            return Affinities.GetVec3i(element).X;
+            return Affinities.GetVec3i(element, new Vec3i(1,0,0)).X;
         }
         public void AddEXP(string element, int amount = 0)
         {
-            Vec3i temp = Affinities.GetVec3i(element);
+            Vec3i temp = Affinities.GetVec3i(element, new Vec3i());
             int total = amount + temp.Y;
             if (total >= GetEXPForNextLVL(temp.X))
             {
@@ -116,6 +119,7 @@ namespace VSHexMod.EntityBehaviors
         public override void Initialize(EntityProperties properties = null, JsonObject typeAttributes = null)
         {
             this.MediaTree = new TreeAttribute();
+            this.Affinities = new TreeAttribute();
             if (typeAttributes is null)
             {
                 typeAttributes = new("");
@@ -212,7 +216,7 @@ namespace VSHexMod.EntityBehaviors
             if (Amount > Media ||(pain == EnumHexStrain.Injured && GetAffinities(element) <= 1))
                 return false;
 
-            Media -= (float)(Amount / Math.Pow(1.5,GetAffinities(element) - 1));
+            Media -= (float)(Amount / Math.Pow(1.01,GetAffinities(element) - 1));
             if (pain == EnumHexStrain.None)
             {
                 MaxMedia += (1f - (Media / MaxMedia)) * (Amount);
@@ -222,6 +226,14 @@ namespace VSHexMod.EntityBehaviors
             {
                 DamageAffinity(element);
                 MaxMedia -= Amount / 2;
+            }
+
+            if (entity.Api is ServerCoreAPI sapi)
+            {
+                if (entity is EntityPlayer player)
+                {
+                    sapi.Network.GetChannel("StartMedia").SendPacket(new UseMedia() { Amount = new float[] { Media, MaxMedia } }, player.Player as ServerPlayer);
+                }
             }
             return true;
         }
@@ -320,6 +332,15 @@ namespace VSHexMod.EntityBehaviors
             {
                 BehaviorMedia med = entity.GetBehavior<BehaviorMedia>();
                 return med.GetAffinities();
+            }
+            return new();
+        }
+        public static int GetAffinities(this Entity entity, string type)
+        {
+            if (entity.HasBehavior<BehaviorMedia>())
+            {
+                BehaviorMedia med = entity.GetBehavior<BehaviorMedia>();
+                return med.GetAffinities(type);
             }
             return new();
         }
