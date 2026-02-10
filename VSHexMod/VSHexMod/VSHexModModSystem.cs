@@ -144,6 +144,7 @@ namespace VSHexMod
             ItemStack castingItem = fromPlayer.Entity.ActiveHandItemSlot.Itemstack;
 
             State castState = new(new ListIota(((string[])castingItem?.Attributes["spell"].GetValue()).Select((r) => (Iota)new PatternIota(ResolvedPattern.FromString(r).pattern)).ToList()));
+            castState.SetMaxPower(fromPlayer.Entity.GetAffinities());
 
             ThreadStart star = new(() => new Spells.Eval(fromPlayer.Entity,api, castState));
             Thread vm = new(star);

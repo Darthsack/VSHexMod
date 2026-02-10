@@ -215,7 +215,9 @@ namespace VSHexMod
 
         public void Explode(EntityPos pos)
         {
-            (World as IServerWorldAccessor)?.CreateExplosion(pos.AsBlockPos, EnumBlastType.RockBlast, Math.Min(Math.Max(DamageTier - 2, 0) * 1.5, 31), Math.Min(Math.Max(DamageTier, 1) * 5, 31));
+            if(DamageTier >= 2)
+                (World as IServerWorldAccessor)?.CreateExplosion(pos.AsBlockPos, EnumBlastType.RockBlast, Math.Min(Math.Max(DamageTier - 2, 0) * 1.5, 31), Math.Min(Math.Max(DamageTier, 1) * 5, 31));
+
             IBlockAccessor blockAcc = World.GetBlockAccessor(true, true, true);
 
             Entity[] targets = World.GetEntitiesAround(pos.XYZ, Math.Max(DamageTier, 1) * 5, Math.Max(DamageTier, 1) * 5, (e) => e != FiredBy);

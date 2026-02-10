@@ -18,12 +18,19 @@ using VSHexMod.hexcasting.api.casting.eval.iota;
 using VSHexMod.hexcasting.api.casting.eval;
 using static VSHexMod.VSHexModModSystem;
 using Vintagestory.GameContent;
+using VSHexMod.hexcasting.api.casting.eval.BaseElements;
 
 namespace VSHexMod.EntityBehaviors
 {
+    public enum EnumHexStrain { 
+        None,
+        Stalled,
+        Injured
+    }
     public class BehaviorMedia : EntityBehavior
     {
         ITreeAttribute MediaTree;
+        ITreeAttribute Affinities;
         EntityAgent entityAgent;
 
         float secondsSinceLastUpdate;
@@ -40,6 +47,7 @@ namespace VSHexMod.EntityBehaviors
             get { return MediaTree.GetFloat("maxmedia"); }
             set { MediaTree.SetFloat("maxmedia", value); entity.WatchedAttributes.MarkPathDirty("media"); }
         }
+        
 
         public override string PropertyName()
         {
@@ -49,6 +57,55 @@ namespace VSHexMod.EntityBehaviors
         public void MarkDirty()
         {
             entity.WatchedAttributes.MarkPathDirty("media");
+        }
+
+        public Dictionary<string,int> GetAffinities()
+        {
+            string[] Keys = (string[])Affinities.Select((x)=>x.Key);
+            Dictionary<string, int> temp = new();
+
+            foreach (string key in Keys) {
+                temp.Add(key, Affinities.GetVec3i(key).X);
+            }
+            return temp;
+        }
+        public int GetAffinities(string element)
+        {
+            return Affinities.GetVec3i(element).X;
+        }
+        public void AddEXP(string element, int amount = 0)
+        {
+            Vec3i temp = Affinities.GetVec3i(element);
+            int total = amount + temp.Y;
+            if (total >= GetEXPForNextLVL(temp.X))
+            {
+                if(temp.X < 5)
+                {
+                    total -= GetEXPForNextLVL(temp.X);
+                    temp.X++;
+                    temp.Y = total;
+                    Affinities.SetVec3i(element, temp);
+                    MarkDirty();
+                    AddEXP(element);
+                }
+            }
+            else if(amount != 0)
+            {
+                temp.Y = total;
+                Affinities.SetVec3i(element, temp);
+                MarkDirty();
+            }
+        }
+        public static int GetEXPForNextLVL(int CurLVL)
+        {
+            return CurLVL * CurLVL * CurLVL * 100;
+        }
+        public void DamageAffinity(string element, int amount = 1)
+        {
+            Vec3i temp = Affinities.GetVec3i(element);
+            temp.X -= amount;
+            Affinities.SetVec3i(element, temp);
+            MarkDirty();
         }
 
         public BehaviorMedia(Entity entity) : base(entity)
@@ -65,6 +122,15 @@ namespace VSHexMod.EntityBehaviors
             }
             var MediaTree = entity.WatchedAttributes.GetTreeAttribute("media");
 
+            var Affinities = entity.WatchedAttributes.GetTreeAttribute("affinities");
+
+            if (Affinities == null)
+            {
+                Affinities = this.Affinities;
+                entity.WatchedAttributes.SetAttribute("affinities", this.Affinities);
+                MarkDirty();
+            }
+
             if (MediaTree == null)
             {
                 
@@ -76,6 +142,8 @@ namespace VSHexMod.EntityBehaviors
                 MarkDirty();
                 return;
             }
+
+            
 
             float baseMaxHealth = MediaTree.GetFloat("maxmedia");
             if (baseMaxHealth == 0)
@@ -139,6 +207,24 @@ namespace VSHexMod.EntityBehaviors
             
             return true;
         }
+        public bool UseMedia(float Amount, string element, EnumHexStrain pain = EnumHexStrain.None)
+        {
+            if (Amount > Media ||(pain == EnumHexStrain.Injured && GetAffinities(element) <= 1))
+                return false;
+
+            Media -= (float)(Amount / Math.Pow(1.5,GetAffinities(element) - 1));
+            if (pain == EnumHexStrain.None)
+            {
+                MaxMedia += (1f - (Media / MaxMedia)) * (Amount);
+                AddEXP(element, (int)Amount);
+            }
+            else if (pain == EnumHexStrain.Injured)
+            {
+                DamageAffinity(element);
+                MaxMedia -= Amount / 2;
+            }
+            return true;
+        }
 
         public bool SetMedia(float Amount, float AmountMax)
         {
@@ -159,6 +245,14 @@ namespace VSHexMod.EntityBehaviors
         {
             
             if (Amount > Media)
+                return false;
+
+            return true;
+        }
+        public bool CanUseMedia(float Amount, string element, EnumHexStrain pain = EnumHexStrain.None)
+        {
+
+            if (Amount > Media || (pain == EnumHexStrain.Injured && GetAffinities(element) <= 1))
                 return false;
 
             return true;
@@ -184,12 +278,30 @@ namespace VSHexMod.EntityBehaviors
             }
             return false;
         }
+        public static bool CanUseMedia(this Entity entity, float Amount, string type, EnumHexStrain pain = EnumHexStrain.None)
+        {
+            if (entity.HasBehavior<BehaviorMedia>())
+            {
+                BehaviorMedia med = entity.GetBehavior<BehaviorMedia>();
+                return med.CanUseMedia(Amount, type, pain);
+            }
+            return false;
+        }
         public static bool UseMedia(this Entity entity, float Amount)
         {
             if (entity.HasBehavior<BehaviorMedia>())
             {
                 BehaviorMedia med = entity.GetBehavior<BehaviorMedia>();
                 return med.UseMedia(Amount);
+            }
+            return false;
+        }
+        public static bool UseMedia(this Entity entity, float Amount, string type, EnumHexStrain pain = EnumHexStrain.None)
+        {
+            if (entity.HasBehavior<BehaviorMedia>())
+            {
+                BehaviorMedia med = entity.GetBehavior<BehaviorMedia>();
+                return med.UseMedia(Amount, type, pain);
             }
             return false;
         }
@@ -201,6 +313,15 @@ namespace VSHexMod.EntityBehaviors
                 return med.Media;
             }
             return 0;
+        }
+        public static Dictionary<string,int> GetAffinities(this Entity entity)
+        {
+            if (entity.HasBehavior<BehaviorMedia>())
+            {
+                BehaviorMedia med = entity.GetBehavior<BehaviorMedia>();
+                return med.GetAffinities();
+            }
+            return new();
         }
     }
 }

@@ -136,7 +136,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             api.RegisterHex("qdwdq", typeof(Const_True));// Arc's Reflection (→ num)
             api.RegisterHex("aaq", typeof(Const_True));// Euler's Reflection (→ num)
             
-            // Ellement Shift
+            // Element Shift
 
             api.RegisterHex("qqqqqwaeaeaeaeaea", typeof(Const_Sol));
             api.RegisterHex("qqqae", typeof(Const_Lun));
@@ -266,7 +266,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
-                if ((a is null || b is null) || (a is not DoubleIota && b is not DoubleIota) && (a is not Vec3Iota && b is not Vec3Iota))
+                if ((a is NullIota || b is NullIota) || (a is not DoubleIota && b is not DoubleIota) && (a is not Vec3Iota && b is not Vec3Iota))
                 {
                     castResult = new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
@@ -2412,8 +2412,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         {
             public Const_Sol(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
             {
-
-                stack.Shift(new Solarium(1));
+                
+                Iota pow = stack.Pop();
+                if(pow is DoubleIota p)
+                {
+                    stack.Shift(new Solarium((int)p.getDouble()));
+                }
+                else
+                {
+                    stack.Shift(new Solarium(1));
+                    if (pow is not null)
+                        stack.Push(pow);
+                }
                 castResult = new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
@@ -2425,8 +2435,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         {
             public Const_Lun(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
             {
-
-                stack.Shift(new Lunarium(1));
+                Iota pow = stack.Pop();
+                if (pow is DoubleIota p)
+                {
+                    stack.Shift(new Lunarium((int)p.getDouble()));
+                }
+                else
+                {
+                    stack.Shift(new Lunarium(1));
+                    if (pow is not null)
+                        stack.Push(pow);
+                }
                 castResult = new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
@@ -2438,8 +2457,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         {
             public Const_Tyr(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
             {
-
-                stack.Shift(new Tyerraium(1));
+                Iota pow = stack.Pop();
+                if (pow is DoubleIota p)
+                {
+                    stack.Shift(new Tyerraium((int)p.getDouble()));
+                }
+                else
+                {
+                    stack.Shift(new Tyerraium(1));
+                    if (pow is not null)
+                        stack.Push(pow);
+                }
                 castResult = new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
@@ -2451,8 +2479,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         {
             public Const_Cal(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
             {
-
-                stack.Shift(new Caelium(1));
+                Iota pow = stack.Pop();
+                if (pow is DoubleIota p)
+                {
+                    stack.Shift(new Caelium((int)p.getDouble()));
+                }
+                else
+                {
+                    stack.Shift(new Caelium(1));
+                    if (pow is not null)
+                        stack.Push(pow);
+                }
                 castResult = new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
@@ -2464,8 +2501,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         {
             public Const_Oce(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
             {
-
-                stack.Shift(new Oceanium(1));
+                Iota pow = stack.Pop();
+                if (pow is DoubleIota p)
+                {
+                    stack.Shift(new Oceanium((int)p.getDouble()));
+                }
+                else
+                {
+                    stack.Shift(new Oceanium(1));
+                    if (pow is not null)
+                        stack.Push(pow);
+                }
                 castResult = new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
@@ -2477,8 +2523,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         {
             public Const_Ste(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
             {
-
-                stack.Shift(new Stellarium(1));
+                Iota pow = stack.Pop();
+                if (pow is DoubleIota p)
+                {
+                    stack.Shift(new Stellarium((int)p.getDouble()));
+                }
+                else
+                {
+                    stack.Shift(new Stellarium(1));
+                    if (pow is not null)
+                        stack.Push(pow);
+                }
                 castResult = new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
@@ -2566,7 +2621,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 if (suc)
                 {
-                    player.UseMedia(10 * ((float)stack.exp));
+                    player.UseMedia(10 * ((float)stack.exp), stack.Shift().type);
                     stack.inc();
                     castResult = new CastResult(
                         new ListIota(new List<Iota>() { e }),
@@ -2588,14 +2643,15 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             public Project(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
             {
                 bool suc = false;
+                EnumHexStrain pain = (EnumHexStrain)Math.Clamp((stack.Shift().strength - player.GetAffinities()[stack.Shift().type] - 1) / 5 , 0, 2);
 
-                if (player.CanUseMedia(stack.Shift().strength * 5 * ((float)stack.exp)))
+                if (player.CanUseMedia(stack.Shift().strength * 5 * ((float)stack.exp), stack.Shift().type, pain))
                     suc = stack.Shift().Project(player);
                 
                 
                 if (suc)
                 {
-                    player.UseMedia(stack.Shift().strength * 5 * ((float)stack.exp));
+                    player.UseMedia(stack.Shift().strength * 5 * ((float)stack.exp), stack.Shift().type, pain);
                     stack.inc();
                     castResult = new CastResult(
                         new ListIota(new List<Iota>() {  }),
