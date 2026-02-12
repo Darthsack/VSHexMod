@@ -42,6 +42,11 @@ namespace VSHexMod.EntityBehaviors
             get { return MediaTree.GetFloat("currentmedia"); }
             set { MediaTree.SetFloat("currentmedia", value); entity.WatchedAttributes.MarkPathDirty("media"); }
         }
+        public float TrueMax
+        {
+            get { return MediaTree.GetFloat("trueMax", 5000); }
+            set { MediaTree.SetFloat("trueMax", value); entity.WatchedAttributes.MarkPathDirty("media"); }
+        }
 
         public float MaxMedia
         {
@@ -213,13 +218,15 @@ namespace VSHexMod.EntityBehaviors
         }
         public bool UseMedia(float Amount, string element, EnumHexStrain pain = EnumHexStrain.None)
         {
-            if (Amount > Media ||(pain == EnumHexStrain.Injured && GetAffinities(element) <= 1))
+            if (Amount / Math.Pow(1.08, GetAffinities(element) - 1) > Media ||(pain == EnumHexStrain.Injured && GetAffinities(element) <= 1))
                 return false;
 
-            Media -= (float)(Amount / Math.Pow(1.01,GetAffinities(element) - 1));
+            Media -= (float)(Amount / Math.Pow(1.08,GetAffinities(element) - 1));
             if (pain == EnumHexStrain.None)
             {
-                MaxMedia += (1f - (Media / MaxMedia)) * (Amount);
+                MaxMedia += (1f - (Media / MaxMedia)) * (Amount / (float)Math.Pow(1.1, GetAffinities(element) - 1));
+                MaxMedia = Math.Max(Math.Min(MaxMedia, TrueMax), 20);
+                Media = Math.Min(Media, MaxMedia);
                 AddEXP(element, (int)Amount);
             }
             else if (pain == EnumHexStrain.Injured)
@@ -264,7 +271,7 @@ namespace VSHexMod.EntityBehaviors
         public bool CanUseMedia(float Amount, string element, EnumHexStrain pain = EnumHexStrain.None)
         {
 
-            if (Amount > Media || (pain == EnumHexStrain.Injured && GetAffinities(element) <= 1))
+            if ((Amount / Math.Pow(1.08, GetAffinities(element) - 1)) > Media || (pain == EnumHexStrain.Injured && GetAffinities(element) <= 1))
                 return false;
 
             return true;

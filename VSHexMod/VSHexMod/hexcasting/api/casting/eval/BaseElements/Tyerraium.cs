@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 using VSHexMod.EntityBehaviors;
@@ -107,9 +108,30 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
             return true;
         }
 
+        public override bool Effect(Entity player, Entity target)
+        {
+            if (!player.CanUseMedia(20 * strength, type))
+                return false;
+
+            if (target is EntityPlayer targetplayer)
+            {
+                targetplayer.ReceiveSaturation(10 * strength);
+            }
+            else
+            {
+                ITreeAttribute tree = target.WatchedAttributes.GetTreeAttribute("hunger");
+                if (tree == null) target.WatchedAttributes["hunger"] = tree = new TreeAttribute();
+                float sat = 10 * strength;
+                tree.SetFloat("saturation", sat + tree.GetFloat("saturation", 0));
+                target.WatchedAttributes.SetDouble("lastMealEatenTotalHours", target.World.Calendar.TotalHours);
+                target.WatchedAttributes.MarkPathDirty("hunger");
+            }
+            player.UseMedia(20 * strength, type);
+            return true;
+        }
         public override bool Effect(Entity player, Vec3d pos)
         {
-            if (!player.CanUseMedia(10))
+            if (!player.CanUseMedia(10, type))
                 return false;
             BlockPos block_pos = new BlockPos((int)pos.X, (int)pos.Y, (int)pos.Z);
 
@@ -126,7 +148,7 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
             }
             else return false;
 
-            player.UseMedia(10);
+            player.UseMedia(10, type);
             return true;
         }
         public override bool Place(Entity player, Vec3d target)

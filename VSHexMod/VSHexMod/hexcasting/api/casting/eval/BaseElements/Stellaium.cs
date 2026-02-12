@@ -16,6 +16,24 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
         public Stellarium(int strength) : base(strength, "stella") {
             vel = strength;
         }
+        public override bool Effect(Entity player, Entity target)
+        {
+            if (!player.CanUseMedia(20 * strength, type))
+                return false;
+            EntityBehaviorTemporalStabilityAffected TemporalStability = target.GetBehavior<EntityBehaviorTemporalStabilityAffected>();
+            if (TemporalStability != null)
+            {
+                TemporalStability.OwnStability += strength / 20f;
+            }
+            return true;
+        }
+        public override bool Effect(Entity player, Vec3d pos)
+        {
+            if (!player.CanUseMedia(20 * strength, type))
+                return false;
+
+            return true;
+        }
         public override bool Place(Entity player, Vec3d target)
         {
 

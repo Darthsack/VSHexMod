@@ -25,6 +25,7 @@ using VSHexMod.EntityBehaviors;
 using Vintagestory.Client.NoObf;
 using Vintagestory.Server;
 using VSHexMod.Gui;
+using Vintagestory.API.MathTools;
 
 namespace VSHexMod
 {
@@ -50,6 +51,13 @@ namespace VSHexMod
             [ProtoMember(1)]
             public float[] Amount;
 
+        }
+
+        [ProtoContract]
+        public class LaunchPacket
+        {
+            [ProtoMember(1)]
+            public Vec3d Vec;
 
         }
 
@@ -86,6 +94,7 @@ namespace VSHexMod
 
             api.Network.RegisterChannel("castingbook").RegisterMessageType<castPacket>();
             api.Network.RegisterChannel("StartMedia").RegisterMessageType<StartMediaBar>().RegisterMessageType<UseMedia>();
+            api.Network.RegisterChannel("MiscHexStuff").RegisterMessageType<LaunchPacket>();
 
             RegisterBaseHexxes();
 
@@ -119,6 +128,7 @@ namespace VSHexMod
         public override void StartClientSide(ICoreClientAPI api)
         {
             api.Network.GetChannel("StartMedia").SetMessageHandler<StartMediaBar>(onMediaStart).SetMessageHandler<UseMedia>(onMediaUsed);
+            api.Network.GetChannel("MiscHexStuff").SetMessageHandler<LaunchPacket>(Launch);
             base.StartClientSide(api);
             //Mod.Logger.Notification("Hello from template mod client side: " + Lang.Get("vshexmod:hello"));
         }
@@ -184,6 +194,18 @@ namespace VSHexMod
             }
 
 
+        }
+
+        public void Launch(LaunchPacket packet)
+        {
+            ClientCoreAPI capi = api as ClientCoreAPI;
+            IClientPlayer plr = capi.World.Player;
+            if (plr.Entity.Controls.Gliding)
+            {
+                plr.Entity.Controls.GlideSpeed += packet.Vec.Length() * 10;
+            }
+            else
+                plr.Entity.Pos.Motion += packet.Vec;
         }
         private void RegisterBaseHexxes()
         {
