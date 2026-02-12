@@ -1,0 +1,16 @@
+﻿[
+    {
+		"code": "deedrecipe",
+		"ingredientPattern":"ABC,DDD,DED",
+		"ingredients": {
+			"A": { "type": "item", "code": "game:saw-*", "isTool": true, "toolDurabilityCost": 20 },
+			"B": { "type": "item", "code": "game:hide-pelt-small", "quantity": 1},
+			"C": { "type": "item", "code": "game:inkandquill", "quantity": 1},
+			"D": { "type": "item", "code": "game:plank-*",  "quantity":2},
+			"E": { "type": "item", "code": "game:metalnailsandstrips-*bronze", "quantity": 2}
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "block", "code": "leatherscribetable-south"}
+	}
+]

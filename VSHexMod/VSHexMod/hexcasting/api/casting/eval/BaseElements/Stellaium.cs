@@ -29,9 +29,25 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
         }
         public override bool Effect(Entity player, Vec3d pos)
         {
-            if (!player.CanUseMedia(20 * strength, type))
+            if (!player.CanUseMedia(20 , type))
                 return false;
 
+            IBlockAccessor blockAcc = player.World.GetBlockAccessor(true, true, true);
+            BlockEntityGroundStorage BE = blockAcc.GetBlockEntity<BlockEntityGroundStorage>(new BlockPos((int)pos.X, (int)pos.Y, (int)pos.Z));
+            if (BE != null)
+            {
+                ItemSlot IS = BE.Inventory.FirstNonEmptySlot;
+
+                if (IS != null && IS.Itemstack.Item.Class == "ItemIngot")
+                {
+                    if (IS.Itemstack.Item.FirstCodePart(1) == "iron") {
+                        IS.Itemstack = new ItemStack(player.Api.World.GetItem(IS.Itemstack.Item.CodeWithPart("meteoriciron", 1)), IS.Itemstack.StackSize);
+                        IS.Itemstack.Item.SetTemperature(player.Api.World, IS.Itemstack, 800);
+                        BE.MarkDirty();
+                        player.UseMedia(20, type);
+                    }
+                }
+            }
             return true;
         }
         public override bool Place(Entity player, Vec3d target)

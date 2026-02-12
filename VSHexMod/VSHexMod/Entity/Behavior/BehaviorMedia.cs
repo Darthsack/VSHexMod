@@ -63,6 +63,7 @@ namespace VSHexMod.EntityBehaviors
         public void MarkDirty()
         {
             entity.WatchedAttributes.MarkPathDirty("media");
+            entity.WatchedAttributes.MarkPathDirty("affinities");
         }
 
         public Dictionary<string,int> GetAffinities()
@@ -93,7 +94,6 @@ namespace VSHexMod.EntityBehaviors
                     temp.X++;
                     temp.Y = total;
                     Affinities.SetVec3i(element, temp);
-                    MarkDirty();
                     AddEXP(element);
                 }
             }
@@ -101,8 +101,10 @@ namespace VSHexMod.EntityBehaviors
             {
                 temp.Y = total;
                 Affinities.SetVec3i(element, temp);
-                MarkDirty();
+                
             }
+            entity.WatchedAttributes.SetAttribute("affinities", this.Affinities);
+            MarkDirty();
         }
         public static int GetEXPForNextLVL(int CurLVL)
         {
@@ -113,6 +115,7 @@ namespace VSHexMod.EntityBehaviors
             Vec3i temp = Affinities.GetVec3i(element);
             temp.X -= amount;
             Affinities.SetVec3i(element, temp);
+            entity.WatchedAttributes.SetAttribute("affinities", this.Affinities);
             MarkDirty();
         }
 
@@ -149,7 +152,6 @@ namespace VSHexMod.EntityBehaviors
                 MaxMedia = typeAttributes["maxmedia"].AsFloat(20);
                 Media = typeAttributes["currentmedia"].AsFloat(MaxMedia);
                 MarkDirty();
-                return;
             }
 
             
@@ -161,6 +163,7 @@ namespace VSHexMod.EntityBehaviors
                 MarkDirty();
             }
             this.MediaTree = MediaTree;
+            this.Affinities = Affinities;
             // Otherwise we don't need to read and immediately set the same values back to the mediaTree, nor mark it as dirty: and a MarkDirty() here messes up EntityPlayer media on joining a game, if done prior to initialising BehaviorHunger and its MaxMediaModifiers
             // thanks health behavior!
             secondsSinceLastUpdate = (float)entity.World.Rand.NextDouble();   // Randomise which game tick these update, a starting server would otherwise start all loaded entities with the same zero timer

@@ -159,6 +159,8 @@ namespace VSHexMod
             ThreadStart star = new(() => new Spells.Eval(fromPlayer.Entity,api, castState));
             Thread vm = new(star);
             vm.Start();
+            fromPlayer.Entity.ActiveHandItemSlot.TakeOut(1);
+            fromPlayer.Entity.ActiveHandItemSlot.MarkDirty();
 
         }
 
@@ -202,7 +204,7 @@ namespace VSHexMod
             IClientPlayer plr = capi.World.Player;
             if (plr.Entity.Controls.Gliding)
             {
-                plr.Entity.Controls.GlideSpeed += packet.Vec.Length() * 10;
+                plr.Entity.Controls.GlideSpeed += packet.Vec.Length() / 10;
             }
             else
                 plr.Entity.Pos.Motion += packet.Vec;

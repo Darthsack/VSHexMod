@@ -204,21 +204,23 @@ namespace VSHexMod.BlockEntity
 
             //api.Logger.Event(inventory?.Slots[0]?.Itemstack?.Item?.Attributes?["spell"].ToString());
 
-            
 
+            bool crafted = false;
             if (inventory.Slots[0].Itemstack is null || !inventory.Slots[0].Itemstack.Item.Attributes.KeyExists("spell"))
+            {
                 if (!FindMatchingRecipe())
                     return false;
+                crafted = true;
+            }
 
             if (inventory.Slots[1]?.Itemstack is not null && inventory.Slots[1].Itemstack.Attributes.HasAttribute("spell"))
             {
                 inventory.Slots[2].Itemstack = inventory.Slots[1].Itemstack.Clone();
                 inventory.Slots[2].Itemstack.Attributes = inventory.Slots[1].Itemstack.Attributes.Clone();
 
-                inventory.Slots[0].Itemstack.StackSize--;
+                if (!crafted)
+                    inventory.Slots[0].TakeOut(1);
                 inventory.Slots[2].Itemstack.StackSize = 1;
-                if (inventory.Slots[0].Itemstack.StackSize == 0)
-                    inventory.Slots[0].Itemstack = null;
 
                 inventory.Slots[0].MarkDirty();
                 inventory.Slots[2].MarkDirty();
@@ -229,7 +231,8 @@ namespace VSHexMod.BlockEntity
             if (inventory?.Slots[2]?.Itemstack?.StackSize is null || inventory.Slots[2].Itemstack.StackSize < 1)
             {
                 inventory.Slots[2].Itemstack = inventory.Slots[0].Itemstack.Clone();
-                inventory.Slots[0].Itemstack.StackSize--;
+                if (!crafted)
+                    inventory.Slots[0].TakeOut(1);
                 inventory.Slots[2].Itemstack.StackSize = 1;
             }
 
