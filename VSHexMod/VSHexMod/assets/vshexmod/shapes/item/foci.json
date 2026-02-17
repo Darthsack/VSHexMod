@@ -12,8 +12,8 @@
 		"med-pattern": [12,12]
 	},
 	"textures": {
-		"rings": "block/metal/sheet-plain/brass3",
-		"gem": "block/stone/gem/emerald"
+		"rings": "game:block/metal/sheet-plain/brass3",
+		"gem": "game:block/stone/gem/emerald"
 	},
 	"elements": [
 		{

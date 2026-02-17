@@ -18,7 +18,7 @@ namespace VSHexMod.hexcasting.api.casting.eval
         public Element Element = new();
         public double exp = 1;
         private double mult = 1.5;
-        private Dictionary<string, int> MaxPow;
+        private Dictionary<string, int> MaxPow = new();
         public int BaseMax = 0;
 
 

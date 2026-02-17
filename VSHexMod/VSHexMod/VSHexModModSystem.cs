@@ -26,6 +26,7 @@ using Vintagestory.Client.NoObf;
 using Vintagestory.Server;
 using VSHexMod.Gui;
 using Vintagestory.API.MathTools;
+using Vintagestory.ServerMods.WorldEdit;
 
 namespace VSHexMod
 {
@@ -131,6 +132,33 @@ namespace VSHexMod
             api.Network.GetChannel("MiscHexStuff").SetMessageHandler<LaunchPacket>(Launch);
             base.StartClientSide(api);
             //Mod.Logger.Notification("Hello from template mod client side: " + Lang.Get("vshexmod:hello"));
+
+            api.ChatCommands.Create("getspelldata")
+                .WithDescription("Gets the spell as an string,\n for creating lore spells")
+                .RequiresPlayer()
+                .HandleWith((args) =>
+                {
+                    ItemStack IS = args.Caller.Player.InventoryManager.ActiveHotbarSlot.Itemstack;
+                    if (IS is not null)
+                    {
+                        if(IS.Attributes.HasAttribute("spell"))
+                        {
+                            string output = "";
+                            if (IS.Attributes.HasAttribute("title"))
+                            {
+                                output = "title: " + IS.Attributes.GetString("title") + ", ";
+                            }
+
+                            output += "spell: [\"" + string.Join<string>("\",\"", (string[])IS.Attributes["spell"]?.GetValue()) + "\"]";
+                            api.Forms.SetClipboardText(output);
+
+
+                            return TextCommandResult.Success("The Spell Is:\n" + output);
+                        }
+                        return TextCommandResult.Error("No Spell on this Item");
+                    }
+                    return TextCommandResult.Error("Need an active Item");
+                });
         }
 
         public void onCastPacket(IServerPlayer fromPlayer, castPacket packet)

@@ -190,7 +190,7 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
 
                 return op.getResult();
             }
-            catch (Exception e) 
+            catch (Exception) 
             {
                 return new CastResult(
                 this,

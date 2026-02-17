@@ -1813,9 +1813,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             public Print(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
             {
                 Iota any = stack.Pop();
-                stack.Push(any);
+
+                if (any is not null)
+                {
+                    ((IServerPlayer)((EntityPlayer)player)?.Player)?.SendMessage(0, any?.ToString(), EnumChatType.OwnMessage);
+                    stack.Push(any);
+                }
                 
-                ((IServerPlayer)((EntityPlayer)player)?.Player)?.SendMessage(0,any.ToString(),EnumChatType.OwnMessage);
                 castResult = new CastResult(
                     new ListIota(new List<Iota>() { any }),
                     stack,

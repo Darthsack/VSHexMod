@@ -26,9 +26,6 @@
   "vertexFlags": {
     "zOffset": 2
   },
-  "textures": {
-    "material": { "base": "game:block/glass/smoky" }
-  },
   "resistance": 0.25,
   "collisionbox": null,
   "selectionbox": {
