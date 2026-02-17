@@ -1,0 +1,154 @@
+[
+  {
+    "op": "addmerge",
+    "path": "/attributesByType/*-library/stacks",
+    "value": [
+      {
+        "type": "item",
+        "code": "vshexmod:focus-emerald-brass-unsealed",
+        "chance": 1
+      },
+      {
+        "type": "item", //Empty List
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Empty List",
+          "spell": [ "HexCoord(0,-4) HexPattern[NORTH_EAST,qqaeaae]", "HexCoord(3,-5) HexPattern[EAST,deeeee]" ]
+        }
+      },
+      {
+        "type": "item", //Catalogue
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Catalogue",
+          "spell": [ "HexCoord(0,-5) HexPattern[EAST,aqqqqq]", "HexCoord(3,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(4,-6) HexPattern[SOUTH_EAST,aa]", "HexCoord(6,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(1,-3) HexPattern[EAST,wa]", "HexCoord(1,-2) HexPattern[EAST,weaqa]", "HexCoord(0,-2) HexPattern[SOUTH_WEST,edqde]", "HexCoord(-1,0) HexPattern[NORTH_EAST,de]", "HexCoord(1,1) HexPattern[EAST,deeeee]" ]
+        }
+      },
+      {
+        "type": "item", //Burn Speicimins
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Burn All",
+          "spell": [ "HexCoord(1,-6) HexPattern[WEST,qqq]", "HexCoord(2,-5) HexPattern[SOUTH_EAST,qqqqqwaeaeaeaeaea]", "HexCoord(-1,-2) HexPattern[SOUTH_WEST,aaqawawa]", "HexCoord(1,-2) HexPattern[EAST,eee]", "HexCoord(-3,2) HexPattern[EAST,aqqqqq]", "HexCoord(-2,3) HexPattern[NORTH_EAST,dadad]" ]
+        }
+      },
+      {
+        "type": "item", //Liftoff
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Liftoff",
+          "spell": [ "HexCoord(0,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(1,-5) HexPattern[SOUTH_EAST,aqaaq]", "HexCoord(6,-6) HexPattern[WEST,qeaqwqad]", "HexCoord(0,-3) HexPattern[SOUTH_WEST,aaqawawa]" ]
+        }
+      }
+    ],
+    "file": "game:itemtypes/meta/stackrandomizer-library.json",
+    "side": "Server"
+  },
+  {
+    "op": "addmerge",
+    "path": "/attributesByType/*-lantern/stacks",
+    "value": [
+      {
+        "type": "item", //Mage Light
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Mage Light",
+          "spell": [ "HexCoord(0,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(1,-6) HexPattern[SOUTH_EAST,aa]", "HexCoord(3,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(3,-4) HexPattern[NORTH_EAST,wa]", "HexCoord(-2,-3) HexPattern[EAST,wqaawdd]", "HexCoord(6,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(4,-4) HexPattern[SOUTH_WEST,aa]", "HexCoord(1,-3) HexPattern[SOUTH_EAST,qaq]", "HexCoord(3,-2) HexPattern[EAST,wa]", "HexCoord(-1,-1) HexPattern[WEST,weddwaa]", "HexCoord(-1,0) HexPattern[SOUTH_EAST,aqaawa]", "HexCoord(2,-1) HexPattern[SOUTH_EAST,waqaw]", "HexCoord(-5,3) HexPattern[NORTH_EAST,waaw]", "HexCoord(-3,2) HexPattern[EAST,wdaq]", "HexCoord(0,3) HexPattern[EAST,qaqqqqq]" ]
+        }
+      }
+    ],
+    "file": "game:itemtypes/meta/stackrandomizer.json",
+    "side": "Server"
+  },
+  {
+    "op": "addmerge",
+    "path": "/attributesByType/*-seed/stacks",
+    "value": [
+      {
+        "type": "item", //Grow
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Grow",
+          "spell": [ "HexCoord(0,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(1,-6) HexPattern[SOUTH_EAST,aa]", "HexCoord(3,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(3,-4) HexPattern[NORTH_EAST,wa]", "HexCoord(-2,-3) HexPattern[EAST,wqaawdd]", "HexCoord(3,-3) HexPattern[WEST,qawa]", "HexCoord(-1,0) HexPattern[SOUTH_EAST,aaqawawa]" ]
+        }
+      },
+      {
+        "type": "item", //Water Crop
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Water Crop",
+          "spell": [ "HexCoord(0,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(1,-6) HexPattern[SOUTH_EAST,aa]", "HexCoord(3,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(3,-4) HexPattern[NORTH_EAST,wa]", "HexCoord(-2,-3) HexPattern[EAST,wqaawdd]", "HexCoord(2,-3) HexPattern[SOUTH_WEST,wqqqqw]", "HexCoord(-3,2) HexPattern[EAST,aaqawawa]" ]
+        }
+      }
+    ],
+    "file": "game:itemtypes/meta/stackrandomizer.json",
+    "side": "Server"
+  },
+  {
+    "op": "addmerge",
+    "path": "/attributesByType/*-fuel/stacks",
+    "value": [
+      {
+        "type": "item", //Light Fire
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Light Fire",
+          "spell": [ "HexCoord(0,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(1,-6) HexPattern[SOUTH_EAST,aa]", "HexCoord(3,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(3,-4) HexPattern[NORTH_EAST,wa]", "HexCoord(-2,-3) HexPattern[EAST,wqaawdd]", "HexCoord(2,-2) HexPattern[SOUTH_WEST,qqqqqwaeaeaeaeaea]", "HexCoord(-3,2) HexPattern[SOUTH_EAST,aaqawawa]" ]
+        }
+      }
+    ],
+    "file": "game:itemtypes/meta/stackrandomizer.json",
+    "side": "Server"
+  },
+  {
+    "op": "addmerge",
+    "path": "/attributesByType/*-materials-building/stacks",
+    "value": [
+      {
+        "type": "item", //Mage Block
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Place Mageblock",
+          "spell": [ "HexCoord(0,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(1,-6) HexPattern[SOUTH_EAST,aa]", "HexCoord(3,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(3,-4) HexPattern[NORTH_EAST,wa]", "HexCoord(-2,-3) HexPattern[EAST,wqaawdd]", "HexCoord(0,-1) HexPattern[SOUTH_EAST,qqqqqew]", "HexCoord(3,-1) HexPattern[NORTH_EAST,waaw]", "HexCoord(-2,1) HexPattern[WEST,qqqae]", "HexCoord(-2,2) HexPattern[EAST,qaqqqqq]" ]
+        }
+      }
+    ],
+    "file": "game:itemtypes/meta/stackrandomizer.json",
+    "side": "Server"
+  },
+  {
+    "op": "addmerge",
+    "path": "/attributesByType/*-scribe/stacks",
+    "value": [
+      {
+        "type": "item", //Lightning
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Lightning Strike",
+          "spell": [ "HexCoord(0,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(1,-6) HexPattern[SOUTH_EAST,aa]", "HexCoord(3,-6) HexPattern[SOUTH_WEST,qaq]", "HexCoord(3,-4) HexPattern[NORTH_EAST,wa]", "HexCoord(-2,-3) HexPattern[EAST,wqaawdd]", "HexCoord(4,-3) HexPattern[WEST,qeaqwqad]", "HexCoord(-2,1) HexPattern[EAST,qaqqqqq]" ]
+        }
+      },
+      {
+        "type": "item", //Ice Lance
+        "code": "vshexmod:scroll-parchment-sealed",
+        "chance": 1,
+        "attributes": {
+          "title": "Ice Lance",
+          "spell": [ "HexCoord(0,-5) HexPattern[SOUTH_EAST,aqaaq]", "HexCoord(3,-6) HexPattern[SOUTH_WEST,wqqqqw]", "HexCoord(4,-4) HexPattern[SOUTH_EAST,aqe]" ]
+        }
+      }
+    ],
+    "file": "game:itemtypes/meta/stackrandomizer-clutter.json",
+    "side": "Server"
+  }
+]
