@@ -17,6 +17,7 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
     {
         private int _depth;
         private int _size;
+        public string[] containedPlayerUids = new string[0];
 
         public override string ToString()
         {
@@ -29,6 +30,15 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
             int totalSize = 1;
             foreach (Iota iota in list)
             {
+                if((iota as EntityIota)?.getEntity() is EntityPlayer player)
+                {
+                    containedPlayerUids = containedPlayerUids.AddToArray(player.PlayerUID);
+                }
+                else if (iota is ListIota nested)
+                {
+                    nested.containedPlayerUids.Foreach((x)=> containedPlayerUids = containedPlayerUids.AddToArray(x));
+                    containedPlayerUids = containedPlayerUids.Distinct().ToArray();
+                }
                 totalSize += iota is null ? 1 : iota.size();
                 maxChildDepth = Math.Max(maxChildDepth, iota is null ? 0 : iota.depth());
             }

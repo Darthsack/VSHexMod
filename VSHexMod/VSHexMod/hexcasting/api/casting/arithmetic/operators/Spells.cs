@@ -1563,6 +1563,30 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota Data = stack.Pop();
                 if (Data is not null)
                 {
+                    if(Data is ListIota list)
+                    {
+                        if (list.containedPlayerUids.Length > 1 || list.containedPlayerUids[0] != (player as EntityPlayer).PlayerUID)
+                        {
+                            castResult = new CastResult(
+                                 new ListIota(new List<Iota>() { Data }),
+                                 stack,
+                                 ResolvedPatternType.ERRORED/*,
+                                 result.getSound()*/);
+                            return;
+                        }
+                    }
+                    else if (Data is EntityIota entity)
+                    {
+                        if ((entity.getEntity() as EntityPlayer).PlayerUID != (player as EntityPlayer).PlayerUID) 
+                        {
+                            castResult = new CastResult(
+                                 new ListIota(new List<Iota>() { Data }),
+                                 stack,
+                                 ResolvedPatternType.ERRORED/*,
+                                 result.getSound()*/);
+                            return;
+                        }
+                    }
                     ItemStack Offhand = ((EntityPlayer)player)?.Player.InventoryManager?.OffhandHotbarSlot?.Itemstack;
                     ((Focus)Offhand.Item)?.SetIota(Data, Offhand);
                 }
