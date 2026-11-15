@@ -18,7 +18,7 @@
 		"woodtop": "game:block/wood/table/normal/top",
 		"fleshside": "game:item/resource/hide/flesh",
 		"furside": "game:item/resource/hide/pelt",
-		"feather": "game:item/tool/material/feather"
+		"feather": "game:item/tool/feather"
 	},
 	"elements": [
 		{

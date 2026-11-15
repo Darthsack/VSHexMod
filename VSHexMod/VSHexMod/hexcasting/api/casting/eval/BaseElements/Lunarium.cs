@@ -59,7 +59,7 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
 
             switch (block.BlockMaterial)
             {
-                case EnumBlockMaterial.Liquid:
+                case EnumBlockMaterial.Water:
                 case EnumBlockMaterial.Air:
                     blockAcc.SetBlock(player.World.GetBlock(new AssetLocation("vshexmod:mageblock")).BlockId, bpos);
 

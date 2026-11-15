@@ -1,9 +1,9 @@
 {
   "code": "Basic",
   "name": "parchment",
-  "ingredients": [
+  "ingredient": 
     { "type": "item", "code": "game:paper-parchment"}
-  ],
+  ,
   "output": {
     "type": "item",
     "code": "scroll-parchment-sealed"

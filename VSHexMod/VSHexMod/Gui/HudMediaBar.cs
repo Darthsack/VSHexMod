@@ -84,6 +84,7 @@ namespace VSHexMod.Gui
             ;
 
             mediabar = Composers["mediabar"].GetStatbar("mediastatbar");
+            mediabar.HideWhenFull = true;
             TryOpen();
         }
 
