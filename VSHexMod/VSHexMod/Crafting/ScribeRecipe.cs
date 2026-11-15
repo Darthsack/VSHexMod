@@ -37,18 +37,18 @@ namespace VSHexMod.Crafting
     }
 
     [DocumentAsJson]
-    public class ScribeRecipe : IByteSerializable, IRecipeBase<ScribeRecipe>
+    public class ScribeRecipe : IRecipeBase
     {
-        [DocumentAsJson] public int RecipeId;
-        [DocumentAsJson] public CraftingRecipeIngredient[] Ingredients;
-        [DocumentAsJson] public ScribeOutputStack Output;
+        [DocumentAsJson] public int RecipeId { get; set; }
+        [DocumentAsJson] public CraftingRecipeIngredient[] Ingredients { get; set; }
+        [DocumentAsJson] public ScribeOutputStack Output { get; set; }
         [DocumentAsJson] public AssetLocation Name { get; set; }
         [DocumentAsJson] public bool Enabled { get; set; } = true;
         [DocumentAsJson] public string Code;
 
 
-        IRecipeIngredient[] IRecipeBase<ScribeRecipe>.Ingredients => Ingredients;
-        IRecipeOutput IRecipeBase<ScribeRecipe>.Output => Output;
+        IEnumerable<IRecipeIngredient> IRecipeBase.RecipeIngredients => Ingredients;
+        IRecipeOutput IRecipeBase.RecipeOutput => Output;
 
 
         public bool Matches(ItemSlot[] inputSlots)
@@ -119,7 +119,7 @@ namespace VSHexMod.Crafting
                 for (int i = 0; i < ingredientList.Count; i++)
                 {
                     CraftingRecipeIngredient ingred = ingredientList[i];
-                    var n = ingred.ResolvedItemstack;
+                    var n = ingred.ResolvedItemStack;
                     if (ingred.SatisfiesAsIngredient(inputSlot.Itemstack))
                     {
                         matched.Add(new KeyValuePair<ItemSlot, CraftingRecipeIngredient>(inputSlot, ingred));
@@ -242,7 +242,7 @@ namespace VSHexMod.Crafting
             return ok;
         }
 
-        public ScribeRecipe Clone()
+        public Object Clone()
         {
             CraftingRecipeIngredient[] ingredients = new CraftingRecipeIngredient[Ingredients.Length];
             for (int i = 0; i < Ingredients.Length; i++)

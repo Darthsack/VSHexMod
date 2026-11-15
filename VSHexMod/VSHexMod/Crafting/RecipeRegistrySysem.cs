@@ -19,7 +19,7 @@ namespace VSHexMod.Crafting
         }
 
         /// <summary>
-        /// Registers a knapping recipe. Only use it if you really want to avoid using json files for recipes. 
+        /// Registers a Scribe bench recipe. this was hard coded, but I want to make it  
         /// </summary>
         /// <param name="api"></param>
         /// <param name="r"></param>

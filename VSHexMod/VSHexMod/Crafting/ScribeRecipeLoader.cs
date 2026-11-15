@@ -29,19 +29,18 @@ namespace VSHexMod.Crafting
         bool classExclusiveRecipes = true;
         public override void AssetsLoaded(ICoreAPI api)
         {
-            if (!(api is ICoreServerAPI sapi)) return;
-            this.api = sapi;
+            if (!(api is ICoreServerAPI serverApi)) return;
 
-            classExclusiveRecipes = sapi.World.Config.GetBool("classExclusiveRecipes", true);
+            classExclusiveRecipes = serverApi.World.Config.GetBool("classExclusiveRecipes", true);
+            
 
-
-            LoadRecipes<ScribeRecipe>("scribe recipe", "recipes/scribe", (r) => sapi.RegisterScribeRecipe(r));
-            sapi.World.Logger.StoryEvent(Lang.Get("Mystic powers..."));
+            RecipeLoader.LoadRecipes<ScribeRecipe>(serverApi, "scribe recipe", "recipes/scribe", classExclusiveRecipes,  (r) => serverApi.RegisterScribeRecipe(r as ScribeRecipe));
+            serverApi.World.Logger.StoryEvent(Lang.Get("Mystic powers..."));
 
 
         }
 
-        void LoadRecipes<T>(string name, string path, Action<T> RegisterMethod) where T : IRecipeBase<T>
+        void LoadRecipes<T>(string name, string path, Action<T> RegisterMethod) where T : ScribeRecipe
         {
             Dictionary<AssetLocation, JToken> files = api.Assets.GetMany<JToken>(api.Server.Logger, path);
             int recipeQuantity = 0;
