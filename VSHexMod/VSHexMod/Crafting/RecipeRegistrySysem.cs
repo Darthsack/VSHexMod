@@ -19,7 +19,7 @@ namespace VSHexMod.Crafting
         }
 
         /// <summary>
-        /// Registers a Scribe bench recipe. this was hard coded, but I want to make it  
+        /// Registers a Scribe bench recipe. this was hard coded, but I want to make it proper
         /// </summary>
         /// <param name="api"></param>
         /// <param name="r"></param>
