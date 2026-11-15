@@ -46,11 +46,30 @@ namespace VSHexMod.Crafting
         [DocumentAsJson] public bool Enabled { get; set; } = true;
         [DocumentAsJson] public string Code;
 
+        [DocumentAsJson]  public bool AverageDurability { get; set; }
+
+        [DocumentAsJson]  public string? RequiresTrait { get; set; }
+
+        [DocumentAsJson] public bool ShowInCreatedBy { get; set; }
+
 
         IEnumerable<IRecipeIngredient> IRecipeBase.RecipeIngredients => Ingredients;
         IRecipeOutput IRecipeBase.RecipeOutput => Output;
 
-
+        /// <summary>
+        /// Stub Fix Me
+        /// </summary>
+        /// <param name="world"></param>
+        public void OnParsed(IWorldAccessor world) // stub fix me
+        { }
+        /// <summary>
+        /// Stub Fix Me
+        /// </summary>
+        /// <param name="world"></param>
+        /// <returns></returns>
+        public IEnumerable<IRecipeBase> GenerateRecipesForAllIngredientCombinations(IWorldAccessor world) { 
+            return Enumerable.Empty<IRecipeBase>();
+        }
         public bool Matches(ItemSlot[] inputSlots)
         {
 
