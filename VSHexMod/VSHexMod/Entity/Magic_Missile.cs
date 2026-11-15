@@ -103,7 +103,7 @@ namespace VSHexMod
             if (ShouldDespawn || !Alive) return;
             if (World.ElapsedMilliseconds <= msCollide + 500) return;
 
-            var pos = SidedPos;
+            var pos = Pos;
             if (pos.Motion.LengthSq() < 0.2 * 0.2) return;  // Don't do damage if stuck in ground
 
             Cuboidd projectileBox = SelectionBox.ToDouble().Translate(pos.X, pos.Y, pos.Z);
@@ -125,7 +125,7 @@ namespace VSHexMod
                     return true;
                 }
 
-                Cuboidd eBox = e.SelectionBox.ToDouble().Translate(e.ServerPos.X, e.ServerPos.Y, e.ServerPos.Z);
+                Cuboidd eBox = e.SelectionBox.ToDouble().Translate(e.Pos.X, e.Pos.Y, e.Pos.Z);
 
                 if (eBox.IntersectsOrTouches(projectileBox))
                 {
@@ -143,7 +143,7 @@ namespace VSHexMod
             base.OnGameTick(dt);
             if (ShouldDespawn) return;
 
-            EntityPos pos = SidedPos;
+            EntityPos pos = Pos;
 
             stuck = Collided || collTester.IsColliding(World.BlockAccessor, collisionTestBox, pos.XYZ) || WatchedAttributes.GetBool("stuck");
             if (Api.Side == EnumAppSide.Server) WatchedAttributes.SetBool("stuck", stuck);
@@ -152,7 +152,7 @@ namespace VSHexMod
 
             if (stuck)
             {
-                if (Api.Side == EnumAppSide.Client) ServerPos.SetFrom(Pos);
+                if (Api.Side == EnumAppSide.Client) Pos.SetFrom(Pos);
                 IsColliding(pos, impactSpeed);
                 entitiesHit.Clear(); // to enable falling projectile to hit same entities second time if it was stuck and then released
                 return;
@@ -174,9 +174,9 @@ namespace VSHexMod
 
         public override void OnCollided()
         {
-            EntityPos pos = SidedPos;
+            EntityPos pos = Pos;
 
-            IsColliding(SidedPos, Math.Max(motionBeforeCollide.Length(), pos.Motion.Length()));
+            IsColliding(Pos, Math.Max(motionBeforeCollide.Length(), pos.Motion.Length()));
             motionBeforeCollide.Set(pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
         }
 
@@ -340,19 +340,19 @@ namespace VSHexMod
             if (World is IClientWorldAccessor || World.ElapsedMilliseconds <= msCollide + 250) return false;
             if (impactSpeed <= 0.01) return false;
 
-            EntityPos pos = SidedPos;
+            EntityPos pos = Pos;
 
-            Cuboidd projectileBox = SelectionBox.ToDouble().Translate(ServerPos.X, ServerPos.Y, ServerPos.Z);
+            Cuboidd projectileBox = SelectionBox.ToDouble().Translate(Pos.X, Pos.Y, Pos.Z);
 
             // We give it a bit of extra leeway of 50% because physics ticks can run twice or 3 times in one game tick
-            if (ServerPos.Motion.X < 0) projectileBox.X1 += 1.5 * ServerPos.Motion.X;
-            else projectileBox.X2 += 1.5 * ServerPos.Motion.X;
-            if (ServerPos.Motion.Y < 0) projectileBox.Y1 += 1.5 * ServerPos.Motion.Y;
-            else projectileBox.Y2 += 1.5 * ServerPos.Motion.Y;
-            if (ServerPos.Motion.Z < 0) projectileBox.Z1 += 1.5 * ServerPos.Motion.Z;
-            else projectileBox.Z2 += 1.5 * ServerPos.Motion.Z;
+            if (Pos.Motion.X < 0) projectileBox.X1 += 1.5 * Pos.Motion.X;
+            else projectileBox.X2 += 1.5 * Pos.Motion.X;
+            if (Pos.Motion.Y < 0) projectileBox.Y1 += 1.5 * Pos.Motion.Y;
+            else projectileBox.Y2 += 1.5 * Pos.Motion.Y;
+            if (Pos.Motion.Z < 0) projectileBox.Z1 += 1.5 * Pos.Motion.Z;
+            else projectileBox.Z2 += 1.5 * Pos.Motion.Z;
 
-            Entity entity = World.GetNearestEntity(ServerPos.XYZ, 5f, 5f, (e) => {
+            Entity entity = World.GetNearestEntity(Pos.XYZ, 5f, 5f, (e) => {
                 if (e.EntityId == this.EntityId || !e.IsInteractable) return false;
 
                 // So projectile does not damage same entity twice
@@ -368,7 +368,7 @@ namespace VSHexMod
                     return false;
                 }
 
-                Cuboidd eBox = e.SelectionBox.ToDouble().Translate(e.ServerPos.X, e.ServerPos.Y, e.ServerPos.Z);
+                Cuboidd eBox = e.SelectionBox.ToDouble().Translate(e.Pos.X, e.Pos.Y, e.Pos.Z);
 
                 return eBox.IntersectsOrTouches(projectileBox);
             });
@@ -392,7 +392,7 @@ namespace VSHexMod
 
             EntityHit = true;
 
-            EntityPos pos = SidedPos;
+            EntityPos pos = Pos;
 
             IServerPlayer fromPlayer = null;
             if (FiredBy is EntityPlayer)
@@ -455,7 +455,7 @@ namespace VSHexMod
                 }
 
                 float kbresist = entity.Properties.KnockbackResistance;
-                entity.SidedPos.Motion.Add(kbresist * pos.Motion.X * Weight, kbresist * pos.Motion.Y * Weight, kbresist * pos.Motion.Z * Weight);
+                entity.Pos.Motion.Add(kbresist * pos.Motion.X * Weight, kbresist * pos.Motion.Y * Weight, kbresist * pos.Motion.Z * Weight);
 
                 int leftDurability = 1;
                 if (DamageStackOnImpact)
@@ -484,7 +484,7 @@ namespace VSHexMod
 
         public virtual void SetInitialRotation()
         {
-            var pos = ServerPos;
+            var pos = Pos;
             double speed = pos.Motion.Length();
             if (speed > 0.01)
             {
@@ -496,7 +496,7 @@ namespace VSHexMod
 
         public virtual void SetRotation()
         {
-            EntityPos pos = (World is IServerWorldAccessor) ? ServerPos : Pos;
+            EntityPos pos = (World is IServerWorldAccessor) ? Pos : Pos;
 
             double speed = pos.Motion.Length();
 
@@ -517,7 +517,7 @@ namespace VSHexMod
 
         public override bool CanCollect(Entity byEntity)
         {
-            return !NonCollectible && Alive && World.ElapsedMilliseconds - msLaunch > 1000 && ServerPos.Motion.Length() < 0.01;
+            return !NonCollectible && Alive && World.ElapsedMilliseconds - msLaunch > 1000 && Pos.Motion.Length() < 0.01;
         }
 
         public override ItemStack OnCollected(Entity byEntity)

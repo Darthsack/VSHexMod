@@ -37,31 +37,31 @@ namespace VSHexMod.Crafting
     }
 
     [DocumentAsJson]
-    public class ScribeRecipe : IRecipeBase
+    public class ScribeRecipe : RecipeBase, IByteSerializable, IConcreteCloneable<ScribeRecipe>
     {
-        [DocumentAsJson] public int RecipeId { get; set; }
-        [DocumentAsJson] public CraftingRecipeIngredient[] Ingredients { get; set; }
-        [DocumentAsJson] public ScribeOutputStack Output { get; set; }
-        [DocumentAsJson] public AssetLocation Name { get; set; }
-        [DocumentAsJson] public bool Enabled { get; set; } = true;
-        [DocumentAsJson] public string Code;
+        #region From JSON
 
-        [DocumentAsJson]  public bool AverageDurability { get; set; }
+        [DocumentAsJson("Required")]
+        public CraftingRecipeIngredient? Output { get; set; }
 
-        [DocumentAsJson]  public string? RequiresTrait { get; set; }
+        [DocumentAsJson("Required")]
+        public CraftingRecipeIngredient? Ingredient { get; set; }
 
-        [DocumentAsJson] public bool ShowInCreatedBy { get; set; }
+        #endregion
+        public override IEnumerable<IRecipeIngredient> RecipeIngredients => [Ingredient ?? throw new InvalidOperationException($"Scribe recipe '{Name}' has no ingredient specified")];
 
 
-        IEnumerable<IRecipeIngredient> IRecipeBase.RecipeIngredients => Ingredients;
-        IRecipeOutput IRecipeBase.RecipeOutput => Output;
 
-        /// <summary>
-        /// Stub Fix Me
-        /// </summary>
-        /// <param name="world"></param>
-        public void OnParsed(IWorldAccessor world) // stub fix me
-        { }
+        public override IRecipeOutput RecipeOutput => Output ?? throw new InvalidOperationException($"Scribe recipe '{Name}' has no output specified");
+
+
+        public override void OnParsed(IWorldAccessor world)
+        {
+            if (Ingredient == null) return;
+
+            Ingredient.Id ??= "input";
+            
+        }
         /// <summary>
         /// Stub Fix Me
         /// </summary>
@@ -84,7 +84,7 @@ namespace VSHexMod.Crafting
 
             var matched = pairInput(inputslots);
 
-            ItemStack mixedStack = Output.ResolvedItemstack.Clone();
+            ItemStack mixedStack = Output.ResolvedItemStack.Clone();
             mixedStack.StackSize = 1;
 
 
@@ -120,13 +120,11 @@ namespace VSHexMod.Crafting
 
         List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> pairInput(ItemSlot[] inputStacks)
         {
-            List<CraftingRecipeIngredient> ingredientList = new(Ingredients);
+            List<CraftingRecipeIngredient> ingredientList = [Ingredient];
 
 
             Queue<ItemSlot> inputSlotsList = new Queue<ItemSlot>();
             foreach (var val in inputStacks) if (!val.Empty) inputSlotsList.Enqueue(val);
-
-            if (inputSlotsList.Count != Ingredients.Length) return null;
 
             List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched = new List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>>();
 
@@ -160,123 +158,60 @@ namespace VSHexMod.Crafting
             return matched;
         }
 
-        public void ToBytes(BinaryWriter writer)
+        public override void ToBytes(BinaryWriter writer)
         {
-            writer.Write(Code);
-            writer.Write(Ingredients.Length);
-            for (int i = 0; i < Ingredients.Length; i++)
-            {
-                Ingredients[i].ToBytes(writer);
-            }
-
+            writer.Write(Name?.ToShortString() ?? "");
+            Ingredient.ToBytes(writer);
             Output.ToBytes(writer);
 
         }
     
 
-        public void FromBytes(BinaryReader reader, IWorldAccessor resolver)
+        public override void FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {
-            Code = reader.ReadString();
-            Ingredients = new CraftingRecipeIngredient[reader.ReadInt32()];
+            Name = reader.ReadString();
+            Ingredient = new CraftingRecipeIngredient();
+            Ingredient.FromBytes(reader, resolver);
+            Ingredient.Resolve(resolver, "Scribe Recipe (FromBytes)");
 
-            for (int i = 0; i < Ingredients.Length; i++)
-            {
-                Ingredients[i] = new CraftingRecipeIngredient();
-                Ingredients[i].FromBytes(reader, resolver);
-                Ingredients[i].Resolve(resolver, "Scribe Recipe (FromBytes)");
-            }
 
-            Output = new ScribeOutputStack();
-            Output.FromBytes(reader, resolver.ClassRegistry);
+            Output = new CraftingRecipeIngredient();
+            Output.FromBytes(reader, resolver);
             Output.Resolve(resolver, "Scribe Recipe (FromBytes)");
 
         }
 
 
-        public Dictionary<string, string[]> GetNameToCodeMapping(IWorldAccessor world)
-        {
-            Dictionary<string, string[]> mappings = new Dictionary<string, string[]>();
-
-            if (Ingredients == null || Ingredients.Length == 0) return mappings;
-
-            foreach (var ingred in Ingredients)
-            {
-                if (!ingred.Code.Path.Contains('*')) continue;
-
-                int wildcardStartLen = ingred.Code.Path.IndexOf('*');
-                int wildcardEndLen = ingred.Code.Path.Length - wildcardStartLen - 1;
-
-                List<string> codes = new List<string>();
-
-                if (ingred.Type == EnumItemClass.Block)
-                {
-                    foreach (Block block in world.Blocks)
-                    {
-                        if (block.IsMissing) continue;   // BlockList already performs the null check for us, in its enumerator
-
-                        if (WildcardUtil.Match(ingred.Code, block.Code))
-                        {
-                            string code = block.Code.Path.Substring(wildcardStartLen);
-                            string codepart = code.Substring(0, code.Length - wildcardEndLen);
-                            if (ingred.AllowedVariants != null && !ingred.AllowedVariants.Contains(codepart)) continue;
-
-                            codes.Add(codepart);
-
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (Item item in world.Items)
-                    {
-                        if (item.Code == null || item.IsMissing) continue;
-
-                        if (WildcardUtil.Match(ingred.Code, item.Code))
-                        {
-                            string code = item.Code.Path.Substring(wildcardStartLen);
-                            string codepart = code.Substring(0, code.Length - wildcardEndLen);
-                            if (ingred.AllowedVariants != null && !ingred.AllowedVariants.Contains(codepart)) continue;
-
-                            codes.Add(codepart);
-                        }
-                    }
-                }
-
-                mappings[ingred.Name ?? "wildcard" + mappings.Count] = codes.ToArray();
-            }
-
-            return mappings;
-        }
-
-        public bool Resolve(IWorldAccessor world, string sourceForErrorLogging)
+        
+        override public bool Resolve(IWorldAccessor world, string sourceForErrorLogging)
         {
             bool ok = true;
+            Ingredient.Resolve(world, sourceForErrorLogging);
 
-            foreach(CraftingRecipeIngredient ingr in Ingredients)
-            {
-                ok = ingr.Resolve(world, sourceForErrorLogging);
-                if(!ok) break;
-            }
             if(ok) Output.Resolve(world, sourceForErrorLogging);
+
             return ok;
         }
 
-        public Object Clone()
-        {
-            CraftingRecipeIngredient[] ingredients = new CraftingRecipeIngredient[Ingredients.Length];
-            for (int i = 0; i < Ingredients.Length; i++)
-            {
-                ingredients[i] = Ingredients[i].Clone();
-            }
 
-            return new ScribeRecipe()
+        public override ScribeRecipe Clone()
+        {
+            ScribeRecipe recipe = new();
+
+            CloneTo(recipe);
+
+            return recipe;
+        }
+
+        protected override void CloneTo(object recipe)
+        {
+            recipe = new ScribeRecipe()
             {
                 Output = Output.Clone(),
-                Code = Code,
-                Enabled = Enabled,
                 Name = Name,
+                Enabled = Enabled,
                 RecipeId = RecipeId,
-                Ingredients = ingredients
+                Ingredient = Ingredient.Clone()
             };
         }
     }

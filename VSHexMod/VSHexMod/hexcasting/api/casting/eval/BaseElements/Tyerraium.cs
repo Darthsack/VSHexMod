@@ -51,8 +51,8 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
                 double rndpitch = rndx * acc * 0.75f;
                 double rndyaw = rndy * acc * 0.75f;
 
-                Vec3d pos = player.ServerPos.XYZ.Add(0, player.LocalEyePos.Y, 0);
-                Vec3d aheadPos = pos.AheadCopy(15, player.SidedPos.Pitch + rndpitch, player.SidedPos.Yaw + rndyaw);
+                Vec3d pos = player.Pos.XYZ.Add(0, player.LocalEyePos.Y, 0);
+                Vec3d aheadPos = pos.AheadCopy(15, player.Pos.Pitch + rndpitch, player.Pos.Yaw + rndyaw);
                 //Vec3d velocity = (aheadPos - pos) * 1;
 
                 BlockSelection B = new();
@@ -76,9 +76,9 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
                     player.World.SpawnCubeParticles(B.Position, B.Position.ToVec3d() + B.HitPosition, 0.2f, 5, 0.5f);
                 }
 
-                //entityarrow.ServerPos.SetPosWithDimension(player.SidedPos.BehindCopy(0.21).XYZ.Add(0, player.LocalEyePos.Y, 0));
-                //entityarrow.ServerPos.Motion.Set(velocity);
-                //entityarrow.Pos.SetFrom(entityarrow.ServerPos);
+                //entityarrow.Pos.SetPosWithDimension(player.Pos.BehindCopy(0.21).XYZ.Add(0, player.LocalEyePos.Y, 0));
+                //entityarrow.Pos.Motion.Set(velocity);
+                //entityarrow.Pos.SetFrom(entityarrow.Pos);
                 //entityarrow.World = player.World;
                 //entityarrow.SetRotation();
 

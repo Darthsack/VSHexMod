@@ -56,14 +56,14 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
             entityarrow.NonCollectible = true;
 
 
-            Vec3d pos = player.ServerPos.XYZ.Add(0, player.LocalEyePos.Y, 0);
-            Vec3d aheadPos = pos.AheadCopy(1, player.SidedPos.Pitch , player.SidedPos.Yaw );
+            Vec3d pos = player.Pos.XYZ.Add(0, player.LocalEyePos.Y, 0);
+            Vec3d aheadPos = pos.AheadCopy(1, player.Pos.Pitch , player.Pos.Yaw );
             Vec3d velocity = (aheadPos - pos) * vel;
 
 
-            entityarrow.ServerPos.SetPosWithDimension(player.SidedPos.BehindCopy(0.21).XYZ.Add(0, player.LocalEyePos.Y, 0));
-            entityarrow.ServerPos.Motion.Set(velocity);
-            entityarrow.Pos.SetFrom(entityarrow.ServerPos);
+            entityarrow.Pos.SetPosWithDimension(player.Pos.BehindCopy(0.21).XYZ.Add(0, player.LocalEyePos.Y, 0));
+            entityarrow.Pos.Motion.Set(velocity);
+            entityarrow.Pos.SetFrom(entityarrow.Pos);
             entityarrow.World = player.World;
             entityarrow.SetRotation();
 

@@ -25,11 +25,11 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
                 return false;
 
 
-            float cosPitch = GameMath.Cos(target.SidedPos.Pitch);
-            float sinPitch = GameMath.Sin(target.SidedPos.Pitch);
+            float cosPitch = GameMath.Cos(target.Pos.Pitch);
+            float sinPitch = GameMath.Sin(target.Pos.Pitch);
 
-            float cosYaw = GameMath.Cos(target.SidedPos.Yaw);
-            float sinYaw = GameMath.Sin(target.SidedPos.Yaw);
+            float cosYaw = GameMath.Cos(target.Pos.Yaw);
+            float sinYaw = GameMath.Sin(target.Pos.Yaw);
 
             Vec3d launch = new Vec3d(cosPitch * -sinYaw, sinPitch, cosPitch * -cosYaw) * strength;
 
@@ -38,7 +38,7 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
                 (target.Api as ICoreServerAPI).Network.GetChannel("MiscHexStuff").SendPacket(new LaunchPacket() { Vec = launch }, plr);
             }
             else
-                target.SidedPos.Motion -= launch ;
+                target.Pos.Motion -= launch ;
             player.UseMedia(20 * strength, type);
 
             return true;

@@ -28,6 +28,17 @@ namespace VSHexMod.Crafting
             api.ModLoader.GetModSystem<ScribeRecipeRegistrySysem>().RegisterScribeRecipe(r);
         }
     }
+
+    public class DisableScribeRecipeRegisteringSystem : ModSystem
+    {
+        public override double ExecuteOrder() => 99999;
+        public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Server;
+        public override void AssetsFinalize(ICoreAPI api)
+        {
+            ScribeRecipeRegistrySysem.canRegister = false;
+        }
+    }
+
     public class ScribeRecipeRegistrySysem : ModSystem
     {
         public static bool canRegister = true;
@@ -37,6 +48,8 @@ namespace VSHexMod.Crafting
         /// </summary>
         public List<ScribeRecipe> ScribeRecipes = new List<ScribeRecipe>();
 
+
+        ICoreAPI api;
         public override double ExecuteOrder()
         {
             return 0.6;
@@ -44,6 +57,7 @@ namespace VSHexMod.Crafting
 
         public override void StartPre(ICoreAPI api)
         {
+            this.api = api;
             canRegister = true;
         }
 
@@ -58,12 +72,6 @@ namespace VSHexMod.Crafting
         {
             if (!canRegister) throw new InvalidOperationException("Coding error: Can no long register cooking recipes. Register them during AssetsLoad/AssetsFinalize and with ExecuteOrder < 99999");
             
-            if (recipe.Code == null)
-            {
-                throw new ArgumentException("Scribe recipes must have a non-null code! (choose freely)");
-            }
-
-
             ScribeRecipes.Add(recipe);
         }
     }

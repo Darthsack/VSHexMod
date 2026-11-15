@@ -1627,7 +1627,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota e = stack.Pop();
                 if (e is EntityIota)
                 {
-                    stack.Push(new Vec3Iota(((EntityIota)e).getEntity().LocalEyePos + ((EntityIota)e).getEntity().SidedPos.XYZ));
+                    stack.Push(new Vec3Iota(((EntityIota)e).getEntity().LocalEyePos + ((EntityIota)e).getEntity().Pos.XYZ));
                 }
                 else
                 {
@@ -1652,7 +1652,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota e = stack.Pop();
                 if (e is EntityIota)
                 {
-                    stack.Push(new Vec3Iota(((EntityIota)e).getEntity().SidedPos.XYZ));
+                    stack.Push(new Vec3Iota(((EntityIota)e).getEntity().Pos.XYZ));
                 }
                 else
                 {
@@ -1678,11 +1678,11 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota e = stack.Pop();
                 if (e is EntityIota)
                 {
-                    float cosPitch = GameMath.Cos(((EntityIota)e).getEntity().SidedPos.Pitch );
-                    float sinPitch = GameMath.Sin(((EntityIota)e).getEntity().SidedPos.Pitch );
+                    float cosPitch = GameMath.Cos(((EntityIota)e).getEntity().Pos.Pitch );
+                    float sinPitch = GameMath.Sin(((EntityIota)e).getEntity().Pos.Pitch );
 
-                    float cosYaw = GameMath.Cos(((EntityIota)e).getEntity().SidedPos.Yaw );
-                    float sinYaw = GameMath.Sin(((EntityIota)e).getEntity().SidedPos.Yaw );
+                    float cosYaw = GameMath.Cos(((EntityIota)e).getEntity().Pos.Yaw );
+                    float sinYaw = GameMath.Sin(((EntityIota)e).getEntity().Pos.Yaw );
 
                     stack.Push(new Vec3Iota(new Vec3d(-cosPitch * sinYaw, sinPitch, -cosPitch * cosYaw)));
                 }
@@ -1885,7 +1885,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota e = stack.Pop();
                 if (e is EntityIota)
                 {
-                    stack.Push(new Vec3Iota(((EntityIota)e).getEntity().SidedPos.Motion));
+                    stack.Push(new Vec3Iota(((EntityIota)e).getEntity().Pos.Motion));
                 }
                 else
                 {
