@@ -58,6 +58,9 @@ namespace VSHexMod.hexcasting.common.lib.hex
 
         public Iota type(string name)
         {
+            if (!_REGISTRY.ContainsKey(name))
+                throw new DirectoryNotFoundException(name + " is not an Iota in this context. \nIs this an Iota from another/ old save?");
+
             return _REGISTRY[name];
         }
     }

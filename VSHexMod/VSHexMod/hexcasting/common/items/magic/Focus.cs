@@ -1,4 +1,5 @@
 ﻿using Cairo;
+using HarmonyLib;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
 using System;
@@ -23,6 +24,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VSHexMod.hexcasting.common.items.magic
 {
+    
     public class Focus : ItemRollable
     {
         bool editable;
@@ -85,7 +87,6 @@ namespace VSHexMod.hexcasting.common.items.magic
                 }
             }
         }
-
         bool reload = false;
         public override void OnLoaded(ICoreAPI api)
         {

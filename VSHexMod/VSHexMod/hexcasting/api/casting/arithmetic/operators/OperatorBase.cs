@@ -15,7 +15,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         public static int cost = 0;
         public CastResult castResult;
 
-        public OperatorBase(Entity player, ICoreAPI api, State Current) { }
+        //public OperatorBase(Entity player, ICoreAPI api, State Current) { }
 
         public CastResult getResult()
         {
@@ -25,5 +25,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         { 
             return cost;
         }
+
+        public abstract CastResult Run(Entity player, ICoreAPI api, State Current);
     }
 }

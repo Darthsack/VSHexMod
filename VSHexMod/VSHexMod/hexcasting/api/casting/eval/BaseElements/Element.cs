@@ -38,6 +38,12 @@ namespace VSHexMod.hexcasting.api.casting.eval.BaseElements
         public int vel = 1;
         public virtual bool Project(Entity player)
         {
+
+            if(this.type == "")
+            {
+                return false;
+            }
+
             var loc = new AssetLocation("vshexmod:magic_missile-" + this.type);
 
             EntityProperties type = player.World.GetEntityType(loc);

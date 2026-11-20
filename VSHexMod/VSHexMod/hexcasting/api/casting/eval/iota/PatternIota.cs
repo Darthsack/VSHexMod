@@ -60,7 +60,7 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
                     result.getSound()*/);
             Current++;
 
-            api.ModLoader.GetModSystem<VSHexModModSystem>().HexRegistry.TryGetValue(this.getPattern().anglesSignature(), out Type lookup);
+            api.ModLoader.GetModSystem<VSHexModModSystem>().HexRegistry.TryGetValue(this.getPattern().anglesSignature(), out OperatorBase lookup);
 
             if (lookup is null) 
             {
@@ -186,11 +186,9 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
 
             try
             {
-                OperatorBase op = (OperatorBase)lookup.Assembly.CreateInstance(lookup.FullName,false,0,null, new object[] { player, api, Current} ,null ,null );
-
-                return op.getResult();
+                return lookup.Run(player, api, Current);
             }
-            catch (Exception) 
+            catch (Exception e) 
             {
                 return new CastResult(
                 this,
@@ -212,12 +210,19 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
             HexPattern val = getPattern();
             val.ToBytes(writer);
         }
+        public override void ToBytes(BinaryWriter writer, ICoreAPI api, List<string> NameKey)
+        {
+            writer.Write((byte)NameKey.FindIndex((k) => k == api.GetIotaKey(this)));
+
+            HexPattern val = getPattern();
+            val.ToBytes(writer);
+        }
 
         public override Iota FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {
             HexPattern val = new(HexDir.EAST);
             val.FromBytes(reader, resolver);
-            payload = val;
+            //payload = val;
 
             return new PatternIota(val);
         }

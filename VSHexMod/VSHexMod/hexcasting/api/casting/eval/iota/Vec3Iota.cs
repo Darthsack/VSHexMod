@@ -66,6 +66,16 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
             writer.Write(vec3.Y);
             writer.Write(vec3.Z);
         }
+        public override void ToBytes(BinaryWriter writer, ICoreAPI api, List<string> NameKey)
+        {
+            writer.Write((byte)NameKey.FindIndex((k) => k == api.GetIotaKey(this)));
+
+            Vec3d vec3 = this.getVec3(); 
+
+            writer.Write(vec3.X);
+            writer.Write(vec3.Y);
+            writer.Write(vec3.Z);
+        }
 
         public override Iota FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {

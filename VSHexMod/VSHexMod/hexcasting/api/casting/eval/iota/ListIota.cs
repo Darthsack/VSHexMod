@@ -82,9 +82,47 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
             return _depth;
         }
 
+        public List<string> FindTypeKeys(ICoreAPI api, List<string> IotaKeys = null)
+        {
+            IotaKeys ??= [];
+            List<Iota> val = getList();
+            val.ForEach(o =>
+            {
+                if (!IotaKeys.Contains(api.GetIotaKey(o)))
+                    IotaKeys.Add(api.GetIotaKey(o));
+                if (o is ListIota n)
+                    IotaKeys = n.FindTypeKeys(api, IotaKeys);
+            });
+
+            return IotaKeys;
+        }
+
+
         public override void ToBytes(BinaryWriter writer, ICoreAPI api)
         {
             writer.Write(api.GetIotaKey(this));
+
+            List<Iota> val = getList();
+
+            List<string> IotaKeys = FindTypeKeys(api);
+            writer.Write((short)IotaKeys.Count);
+            foreach (string key in IotaKeys)
+            {
+                writer.Write(key);
+            }
+
+            writer.Write((short)val.Count);
+
+            foreach (Iota I in val)
+            {
+                I.ToBytes(writer, api, IotaKeys);
+                if (writer.BaseStream.Length > 32768)
+                    return;
+            }
+        }
+        public override void ToBytes(BinaryWriter writer, ICoreAPI api, List<string> NameKey)
+        {
+            writer.Write((byte)NameKey.FindIndex((k) => k == api.GetIotaKey(this)));
 
             List<Iota> val = getList();
             writer.Write((short)val.Count);
@@ -99,15 +137,50 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
 
         public override Iota FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {
-            int count = reader.ReadInt16();
+            short count = reader.ReadInt16();
 
-            List<Iota> val = new();
+            List<Iota> valTypes = [];
 
             for (int i = 0; i < count; i++)
             {
                 string type = reader.ReadString();
                 Iota io = resolver.Api.GetEmptyIota(type);
-                val.Add(io.FromBytes(reader, resolver));
+                valTypes.Add(io);
+            }
+
+            count = reader.ReadInt16();
+
+            List<Iota> val = [];
+
+            for (int i = 0; i < count; i++)
+            {
+                byte type = reader.ReadByte();
+                Iota io = valTypes[type];
+
+                if(io is ListIota)
+                    val.Add(FromBytes(reader, resolver, valTypes));
+                else
+                    val.Add(io.FromBytes(reader, resolver));
+            }
+            
+            return new ListIota(val);
+        }
+
+        public static Iota FromBytes(BinaryReader reader, IWorldAccessor resolver, List<Iota> valTypes)
+        {
+            short count = reader.ReadInt16();
+
+            List<Iota> val = [];
+
+            for (int i = 0; i < count; i++)
+            {
+                byte type = reader.ReadByte();
+                Iota io = valTypes[type].Copy();
+
+                if (io is ListIota)
+                    val.Add(FromBytes(reader, resolver, valTypes));
+                else
+                    val.Add(io.FromBytes(reader, resolver));
             }
 
             return new ListIota(val);

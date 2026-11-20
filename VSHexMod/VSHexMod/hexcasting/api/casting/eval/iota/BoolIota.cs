@@ -42,13 +42,21 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
 
             writer.Write(val);
         }
+        public override void ToBytes(BinaryWriter writer, ICoreAPI api, List<string> NameKey)
+        {
+            writer.Write((byte)NameKey.FindIndex((k) => k == api.GetIotaKey(this)));
+
+            bool val = getBool();
+
+            writer.Write(val);
+        }
 
         public override Iota FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {
 
-            payload = reader.ReadBoolean();
+            bool payload = reader.ReadBoolean();
 
-            return new BoolIota((bool)payload);
+            return new BoolIota(payload);
         }
     }
 }

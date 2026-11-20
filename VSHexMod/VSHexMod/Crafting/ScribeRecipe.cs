@@ -50,8 +50,6 @@ namespace VSHexMod.Crafting
         #endregion
         public override IEnumerable<IRecipeIngredient> RecipeIngredients => [Ingredient ?? throw new InvalidOperationException($"Scribe recipe '{Name}' has no ingredient specified")];
 
-
-
         public override IRecipeOutput RecipeOutput => Output ?? throw new InvalidOperationException($"Scribe recipe '{Name}' has no output specified");
 
 
@@ -61,14 +59,6 @@ namespace VSHexMod.Crafting
 
             Ingredient.Id ??= "input";
             
-        }
-        /// <summary>
-        /// Stub Fix Me
-        /// </summary>
-        /// <param name="world"></param>
-        /// <returns></returns>
-        public IEnumerable<IRecipeBase> GenerateRecipesForAllIngredientCombinations(IWorldAccessor world) { 
-            return Enumerable.Empty<IRecipeBase>();
         }
         public bool Matches(ItemSlot[] inputSlots)
         {

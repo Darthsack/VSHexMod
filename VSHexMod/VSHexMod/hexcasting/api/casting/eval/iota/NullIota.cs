@@ -35,6 +35,10 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
         {
             writer.Write(api.GetIotaKey(this));
         }
+        public override void ToBytes(BinaryWriter writer, ICoreAPI api, List<string> NameKey)
+        {
+            writer.Write((byte)NameKey.FindIndex((k) => k == api.GetIotaKey(this)));
+        }
 
         public override Iota FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {

@@ -3,15 +3,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 using Vintagestory.Server;
 using VSHexMod.EntityBehaviors;
@@ -19,6 +22,7 @@ using VSHexMod.hexcasting.api.casting.eval;
 using VSHexMod.hexcasting.api.casting.eval.BaseElements;
 using VSHexMod.hexcasting.api.casting.eval.iota;
 using VSHexMod.hexcasting.common.items.magic;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static Vintagestory.Server.Timer;
 using static VSHexMod.hexcasting.api.casting.arithmetic.operators.Spells;
@@ -30,65 +34,65 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         public static void RegisterArithmetic(ICoreAPI api)
         {
             //Doubles & Vectors
-            api.RegisterHex("waaw", typeof(Add)); // Additive Distillation (num|vec, num|vec → num|vec) // Additive Distillation (list, list → list)
-            api.RegisterHex("wddw", typeof(Sub)); // Subtractive Distillation (num|vec, num|vec → num|vec)
-            api.RegisterHex("waqaw", typeof(Mul)); // Multiplicative Dstl. (num|vec, num|vec → num|vec)
-            api.RegisterHex("wdedw", typeof(Div)); // Division Dstl. (num|vec, num|vec → num|vec)
-            api.RegisterHex("wqaqw", typeof(Abs)); // Length Purification (num|vec → number) // Length Purification (list → num) // Length Purification (bool → number)
-            api.RegisterHex("wedew", typeof(Pow)); // Power Distillation (num|vec, num|vec → num|vec)
-            api.RegisterHex("ewq", typeof(Floor)); // Floor Purification (num|vec → num|vec)
-            api.RegisterHex("qwe", typeof(Ceil)); // Ceiling Purification(num| vec → num | vec)
-            api.RegisterHex("eqqq", typeof(Rand)); // Entropy Reflection(→ num)
+            api.RegisterHex("waaw", new Add()); // Additive Distillation (num|vec, num|vec → num|vec) // Additive Distillation (list, list → list)
+            api.RegisterHex("wddw", new Sub()); // Subtractive Distillation (num|vec, num|vec → num|vec)
+            api.RegisterHex("waqaw", new Mul()); // Multiplicative Dstl. (num|vec, num|vec → num|vec)
+            api.RegisterHex("wqaqw", new Abs()); // Length Purification (num|vec → number) // Length Purification (list → num) // Length Purification (bool → number)
+            api.RegisterHex("wdedw", new Div()); // Division Dstl. (num|vec, num|vec → num|vec)
+            api.RegisterHex("wedew", new Pow()); // Power Distillation (num|vec, num|vec → num|vec)
+            api.RegisterHex("ewq", new Floor()); // Floor Purification (num|vec → num|vec)
+            api.RegisterHex("qwe", new Ceil()); // Ceiling Purification(num| vec → num | vec)
+            api.RegisterHex("eqqq", new Rand()); // Entropy Reflection(→ num)
 
-            api.RegisterHex("qqqqqaa", typeof(Sin)); // Sine Purification (num → num)
-            api.RegisterHex("qqqqqad", typeof(Cos)); // Cosine Purification (num → num)
-            api.RegisterHex("wqqqqqadq", typeof(Tan)); // Tangent Purification (num → num)
-            api.RegisterHex("ddeeeee", typeof(Arcsin)); // Inverse Sine Prfn. (num → num)
-            api.RegisterHex("adeeeee", typeof(Arccos)); // Inverse Cosine Prfn. (num → num)
-            api.RegisterHex("eadeeeeew", typeof(ArcTan)); // Inverse Tangent Prfn. (num → num)
-            api.RegisterHex("deadeeeeewd", typeof(ArcTan2)); // Inverse Tan. Prfn. II (num, num → num)
-            api.RegisterHex("eqaqe", typeof(Log)); // Logarithmic Distillation (num, num → num)
-            api.RegisterHex("addwaad", typeof(Mod)); // Modulus Distillation (num|vec, num|vec → num|vec)
+            api.RegisterHex("qqqqqaa", new Sin()); // Sine Purification (num → num)
+            api.RegisterHex("qqqqqad", new Cos()); // Cosine Purification (num → num)
+            api.RegisterHex("wqqqqqadq", new Tan()); // Tangent Purification (num → num)
+            api.RegisterHex("ddeeeee", new Arcsin()); // Inverse Sine Prfn. (num → num)
+            api.RegisterHex("adeeeee", new Arccos()); // Inverse Cosine Prfn. (num → num)
+            api.RegisterHex("eadeeeeew", new ArcTan()); // Inverse Tangent Prfn. (num → num)
+            api.RegisterHex("deadeeeeewd", new ArcTan2()); // Inverse Tan. Prfn. II (num, num → num)
+            api.RegisterHex("eqaqe", new Log()); // Logarithmic Distillation (num, num → num)
+            api.RegisterHex("addwaad", new Mod()); // Modulus Distillation (num|vec, num|vec → num|vec)
 
             //Vecs
 
-            api.RegisterHex("eqqqqq", typeof(Pack)); // Vector Exaltation (num, num, num → vector)
-            api.RegisterHex("qeeeee", typeof(UnPack)); // Vector Disintegration (vector → num, num, num)
+            api.RegisterHex("eqqqqq", new Pack()); // Vector Exaltation (num, num, num → vector)
+            api.RegisterHex("qeeeee", new UnPack()); // Vector Disintegration (vector → num, num, num)
             // Axial Purification (vec|num → vec|num)
 
             //Lists
 
-            api.RegisterHex("deeed", typeof(Index)); // Selection Distillation (list, number → any)
-            api.RegisterHex("qaeaqwded", typeof(Slice)); // Selection Exaltation (list, num, num → list)
-            api.RegisterHex("edqde", typeof(Append)); // Integration Distillation (list, any → list)
-            api.RegisterHex("qaeaq", typeof(UnAppend)); // Derivation Decomposition (list → list, any)
-            api.RegisterHex("qqqaede", typeof(Rev)); // Retrograde Purification (list → list)
-            api.RegisterHex("dedqde", typeof(Index_Of)); // Locator's Distillation (list, any → num)
-            api.RegisterHex("edqdewaqa", typeof(Remove)); // Excisor's Distillation (list, num → list)
-            api.RegisterHex("wqaeaqw", typeof(Replace)); // Surgeon's Exaltation (list, num, any → list)
-            api.RegisterHex("ddewedd", typeof(Cons)); // Flock's Gambit (many, num → list)
-            api.RegisterHex("aaqwqaa", typeof(UnCons)); // Flock's Disintegration (list → many)
-            api.RegisterHex("qqaeaae", typeof(EMPTY_LIST)); // Vacant Reflection (→ list)
+            api.RegisterHex("deeed", new Index()); // Selection Distillation (list, number → any)
+            api.RegisterHex("qaeaqwded", new Slice()); // Selection Exaltation (list, num, num → list)
+            api.RegisterHex("edqde", new Append()); // Integration Distillation (list, any → list)
+            api.RegisterHex("qaeaq", new UnAppend()); // Derivation Decomposition (list → list, any)
+            api.RegisterHex("qqqaede", new Rev()); // Retrograde Purification (list → list)
+            api.RegisterHex("dedqde", new Index_Of()); // Locator's Distillation (list, any → num)
+            api.RegisterHex("edqdewaqa", new Remove()); // Excisor's Distillation (list, num → list)
+            api.RegisterHex("wqaeaqw", new Replace()); // Surgeon's Exaltation (list, num, any → list)
+            api.RegisterHex("ddewedd", new Cons()); // Flock's Gambit (many, num → list)
+            api.RegisterHex("aaqwqaa", new UnCons()); // Flock's Disintegration (list → many)
+            api.RegisterHex("qqaeaae", new EMPTY_LIST()); // Vacant Reflection (→ list)
             // Single's Purification (any → list)
             // Speaker's Distillation (list, any → list)
             // Speaker's Decomposition (list → list, any)
 
             //Boolean Logic, Comparisons & Sets
 
-            api.RegisterHex("wdw", typeof(And)); // Conjunction Distillation (bool, bool → bool)
-            api.RegisterHex("waw", typeof(Or)); // Disjunction Distillation (bool, bool → bool)
-            api.RegisterHex("dwa", typeof(Xor)); // Exclusion Distillation (bool, bool → bool)
-            api.RegisterHex("e", typeof(Greater)); // Maximus Distillation (number, number → bool)
-            api.RegisterHex("q", typeof(Less)); // Minimus Distillation (number, number → bool)
-            api.RegisterHex("ee", typeof(Greater_Eq)); // Maximus Distillation II (number, number → bool)
-            api.RegisterHex("qq", typeof(Less_Eq)); // Minimus Distillation II (number, number → bool)
-            api.RegisterHex("ad", typeof(Equals)); // Equality Distillation (any, any → bool)
-            api.RegisterHex("da", typeof(Not_Equal)); // Inequality Distillation (any, any → bool)
-            api.RegisterHex("dw", typeof(Not)); // Negation Purification (bool → bool)
-            api.RegisterHex("aw", typeof(Bool_Coerce)); // Augur's Purification (any → bool)
-            api.RegisterHex("awdd", typeof(If)); // Augur's Exaltation (bool, any, any → any)
+            api.RegisterHex("wdw", new And()); // Conjunction Distillation (bool, bool → bool)
+            api.RegisterHex("waw", new Or()); // Disjunction Distillation (bool, bool → bool)
+            api.RegisterHex("dwa", new Xor()); // Exclusion Distillation (bool, bool → bool)
+            api.RegisterHex("e", new Greater()); // Maximus Distillation (number, number → bool)
+            api.RegisterHex("q", new Less()); // Minimus Distillation (number, number → bool)
+            api.RegisterHex("ee", new Greater_Eq()); // Maximus Distillation II (number, number → bool)
+            api.RegisterHex("qq", new Less_Eq()); // Minimus Distillation II (number, number → bool)
+            api.RegisterHex("ad", new Equals()); // Equality Distillation (any, any → bool)
+            api.RegisterHex("da", new Not_Equal()); // Inequality Distillation (any, any → bool)
+            api.RegisterHex("dw", new Not()); // Negation Purification (bool → bool)
+            api.RegisterHex("aw", new Bool_Coerce()); // Augur's Purification (any → bool)
+            api.RegisterHex("awdd", new If()); // Augur's Exaltation (bool, any, any → any)
             
-            api.RegisterHex("aweaqa", typeof(Unique)); // Uniqueness Purification (list → list)
+            api.RegisterHex("aweaqa", new Unique()); // Uniqueness Purification (list → list)
             // Disjunction Distillation ((num, num)|(list, list) → num|list)
             // Conjunction Distillation ((num, num)|(list, list) → num|list)
             // Exclusion Distillation ((num, num)|(list, list) → num|list)
@@ -96,76 +100,77 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
             // Meta-Eval
 
-            api.RegisterHex("deaqq", typeof(Eval)); // Hermes' Gambit ([pattern] | pattern → many)
+            api.RegisterHex("deaqq", new Eval()); // Hermes' Gambit ([pattern] | pattern → many)
             // Iris' Gambit ([pattern] | pattern → many)
-            api.RegisterHex("dadad", typeof(FOR_EACH)); // Thoth's Gambit (list of patterns, list → list)
+            api.RegisterHex("dadad", new FOR_EACH()); // Thoth's Gambit (list of patterns, list → list)
             // Charon's Gambit
             // Thanatos' Reflection (→ number)
 
             // Read and Write
 
-            api.RegisterHex("aqqqqq", typeof(Read));
-            api.RegisterHex("deeeee", typeof(Write));
+            api.RegisterHex("aqqqqq", new Read());
+            api.RegisterHex("deeeee", new Write());
 
             // Basics
 
-            api.RegisterHex("qaq", typeof(Get_caster));// Mind's Reflection (→ entity | null)
-            api.RegisterHex("aa", typeof(Entity_PosEye));// Compass' Purification (entity → vector)
-            api.RegisterHex("dd", typeof(Entity_PosFoot));// Compass' Purification II (entity → vector)
-            api.RegisterHex("wa", typeof(Entity_Look));// Alidade's Purification (entity → vector)
-            api.RegisterHex("wqaawdd", typeof(RayCast));// Archer's Distillation (vector, vector → vector | null)
-            api.RegisterHex("weddwaa", typeof(RayCast_Axis));// Architect's Distillation (vector, vector → vector | null)
-            api.RegisterHex("weaqa", typeof(RayCast_Entity));// Scout's Distillation (vector, vector → entity | null)
-            api.RegisterHex("de", typeof(Print)); // Reveal (any → any)
-            api.RegisterHex("awq", typeof(Entity_Height));// Stadiometer's Prfn. (entity → num)
-            api.RegisterHex("wq", typeof(Entity_Velocity));// Pace Purification (entity → vector)
+            api.RegisterHex("qaq", new Get_caster());// Mind's Reflection (→ entity | null)
+            api.RegisterHex("aa", new Entity_PosEye());// Compass' Purification (entity → vector)
+            api.RegisterHex("dd", new Entity_PosFoot());// Compass' Purification II (entity → vector)
+            api.RegisterHex("wa", new Entity_Look());// Alidade's Purification (entity → vector)
+            api.RegisterHex("wqaawdd", new RayCast());// Archer's Distillation (vector, vector → vector | null)
+            api.RegisterHex("weddwaa", new RayCast_Axis());// Architect's Distillation (vector, vector → vector | null)
+            api.RegisterHex("weaqa", new RayCast_Entity());// Scout's Distillation (vector, vector → entity | null)
+            api.RegisterHex("de", new Print()); // Reveal (any → any)
+            api.RegisterHex("awq", new Entity_Height());// Stadiometer's Prfn. (entity → num)
+            api.RegisterHex("wq", new Entity_Velocity());// Pace Purification (entity → vector)
 
             // Constants
 
-            api.RegisterHex("aqae", typeof(Const_True));// True Reflection (→ bool)
-            api.RegisterHex("dedq", typeof(Const_False));// False Reflection (→ bool)
-            api.RegisterHex("d", typeof(Const_Null));// Nullary Reflection (→ null)
-            api.RegisterHex("qqqqq", typeof(Const_Vec_Zero));// Vector Reflection Zero (→ vector)
-            api.RegisterHex("qqqqqea", typeof(Const_Vec_X_Pos));// Vector Rfln. +X/-X (→ vector)
-            api.RegisterHex("eeeeeqa", typeof(Const_Vec_X_Neg));
-            api.RegisterHex("qqqqqew", typeof(Const_Vec_Y_Pos));// Vector Rfln. +Y/-Y (→ vector)
-            api.RegisterHex("eeeeeqw", typeof(Const_Vec_Y_Neg));
-            api.RegisterHex("qqqqqed", typeof(Const_Vec_Z_Pos));// Vector Rfln. +Z/-Z (→ vector)
-            api.RegisterHex("eeeeeqd", typeof(Const_Vec_Z_Neg));
-            api.RegisterHex("eawae", typeof(Const_True));// Circle's Reflection (→ num)
-            api.RegisterHex("qdwdq", typeof(Const_True));// Arc's Reflection (→ num)
-            api.RegisterHex("aaq", typeof(Const_True));// Euler's Reflection (→ num)
+            api.RegisterHex("aqae", new Const(new BoolIota(true)));// True Reflection (→ bool)
+            api.RegisterHex("dedq", new Const(new BoolIota(false)));// False Reflection (→ bool)
+            api.RegisterHex("d", new Const(new NullIota()));// Nullary Reflection (→ null)
+            api.RegisterHex("qqqqq", new Const(new Vec3Iota()));// Vector Reflection Zero (→ vector)
+            api.RegisterHex("qqqqqea", new Const(new Vec3Iota(1, 0, 0)));// Vector Rfln. +X/-X (→ vector)
+            api.RegisterHex("eeeeeqa", new Const(new Vec3Iota(-1, 0, 0)));
+            api.RegisterHex("qqqqqew", new Const(new Vec3Iota(0, 1, 0)));// Vector Rfln. +Y/-Y (→ vector)
+            api.RegisterHex("eeeeeqw", new Const(new Vec3Iota(0, -1, 0)));
+            api.RegisterHex("qqqqqed", new Const(new Vec3Iota(0, 0, 1)));// Vector Rfln. +Z/-Z (→ vector)
+            api.RegisterHex("eeeeeqd", new Const(new Vec3Iota(0, 0, -1)));
+            api.RegisterHex("eawae", new Const(new DoubleIota(Math.PI * 2)));// Circle's Reflection (→ num)
+            api.RegisterHex("qdwdq", new Const(new DoubleIota(Math.PI)));// Arc's Reflection (→ num)
+            api.RegisterHex("aaq", new Const(new DoubleIota(Math.E)));// Euler's Reflection (→ num)
             
             // Element Shift
 
-            api.RegisterHex("qqqqqwaeaeaeaeaea", typeof(Const_Sol));
-            api.RegisterHex("qqqae", typeof(Const_Lun));
-            api.RegisterHex("qeaqwqad", typeof(Const_Cal));
-            api.RegisterHex("wqqqqw", typeof(Const_Oce));
-            api.RegisterHex("wdaq", typeof(Const_Ste));
-            api.RegisterHex("qawa", typeof(Const_Tyr));
+            api.RegisterHex("qqqqqwaeaeaeaeaea", new Const_Sol());
+            api.RegisterHex("qqqae", new Const_Lun());
+            api.RegisterHex("qeaqwqad", new Const_Cal());
+            api.RegisterHex("wqqqqw", new Const_Oce());
+            api.RegisterHex("wdaq", new Const_Ste());
+            api.RegisterHex("qawa", new Const_Tyr());
 
             // Stack Manipulation
 
-            api.RegisterHex("aawdd", typeof(SWAP));// Jester's Gambit (any, any → any, any)
-            api.RegisterHex("aaeaa", typeof(ROTATE));// Rotation Gambit (any, any, any → any, any, any)
-            api.RegisterHex("ddqdd", typeof(ROTATE_REVERSE));// Rotation Gambit II (any, any, any → any, any, any)
-            api.RegisterHex("aadaa", typeof(DUPLICATE));// Gemini Decomposition (any → any, any)
-            api.RegisterHex("aaedd", typeof(OVER));// Prospector's Gambit (any, any → any, any, any)
-            api.RegisterHex("ddqaa", typeof(TUCK));// Undertaker's Gambit (any, any → any, any, any)
-            api.RegisterHex("aadadaaw", typeof(TWO_DUP));// Gemini Gambit (any, number → many)
-            api.RegisterHex("qwaeawqaeaqa", typeof(STACK_LEN));// Dioscuri Gambit (any, any → any, any, any, any)
-            api.RegisterHex("aadaadaa", typeof(DUPLICATE_N));// Flock's Reflection (→ number)
-            api.RegisterHex("ddad", typeof(FISHERMAN));// Fisherman's Gambit (number → any)
-            api.RegisterHex("aada", typeof(FISHERMAN_COPY));// Fisherman's Gambit II (number → any)
+            api.RegisterHex("aawdd", new SWAP());// Jester's Gambit (any, any → any, any)
+            api.RegisterHex("aaeaa", new ROTATE());// Rotation Gambit (any, any, any → any, any, any)
+            api.RegisterHex("ddqdd", new ROTATE_REVERSE());// Rotation Gambit II (any, any, any → any, any, any)
+            api.RegisterHex("aadaa", new DUPLICATE());// Gemini Decomposition (any → any, any)
+            api.RegisterHex("aaedd", new OVER());// Prospector's Gambit (any, any → any, any, any)
+            api.RegisterHex("ddqaa", new TUCK());// Undertaker's Gambit (any, any → any, any, any)
+            api.RegisterHex("aadadaaw", new TWO_DUP());// Gemini Gambit (any, number → many)
+            api.RegisterHex("qwaeawqaeaqa", new STACK_LEN());// Dioscuri Gambit (any, any → any, any, any, any)
+            api.RegisterHex("aadaadaa", new DUPLICATE_N());// Flock's Reflection (→ number)
+            api.RegisterHex("ddad", new FISHERMAN());// Fisherman's Gambit (number → any)
+            api.RegisterHex("aada", new FISHERMAN_COPY());// Fisherman's Gambit II (number → any)
             // Swindler's Gambit (many, number → many)
 
             // Basic Spells
 
-            api.RegisterHex("aaqawawa", typeof(Effect));// Effect (entity | vector →)
-            api.RegisterHex("aqe", typeof(Project));// Project (→)
-            api.RegisterHex("aawaawaa", typeof(Explode));// Explode (vector →)
-            api.RegisterHex("qaqqqqq", typeof(Place));// Place (vector →)
+            api.RegisterHex("aaqawawa", new Effect());// Effect (entity | vector →)
+            api.RegisterHex("aqe", new Project());// Project (→)
+            api.RegisterHex("aawaawaa", new Explode());// Explode (vector →)
+            api.RegisterHex("qaqqqqq", new Place());// Place (vector →)
+            api.RegisterHex("qwaawedwewdwe", new Charge());// Charge (num →)
 
             // Nadir (entity →)
             // Zenith  (entity →)
@@ -176,10 +181,10 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
             //api.RegisterHex("aaqawawa", typeof(Ignite));// Ignite (entity | vector →)
         }
-        //Doubles
+        #region Doubles
         public class Add : OperatorBase
         {
-            public Add(Entity player, ICoreAPI api, State Current) : base(player,api, Current)
+            public override CastResult Run(Entity player, ICoreAPI api, State Current) 
             {
                 Iota a = Current.Pop();
                 Iota b = Current.Pop();
@@ -206,14 +211,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         Current,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         Current,
                         ResolvedPatternType.EVALUATED/*,
@@ -222,7 +226,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Sub : OperatorBase
         {
-            public Sub(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -246,14 +250,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -262,18 +266,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Mul : OperatorBase
         {
-            public Mul(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
                 if ((a is NullIota || b is NullIota) || (a is not DoubleIota && b is not DoubleIota) && (a is not Vec3Iota && b is not Vec3Iota))
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
                 if (a is DoubleIota && b is DoubleIota)
                 {
@@ -291,7 +295,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(new DoubleIota(((Vec3Iota)b).getVec3() * ((Vec3Iota)a).getVec3()));
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -300,7 +304,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Div : OperatorBase
         {
-            public Div(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -324,14 +328,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
-                    castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -340,7 +344,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Abs : OperatorBase
         {
-            public Abs(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota a = stack.Pop();
 
@@ -362,14 +366,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
-                    new ListIota(new List<Iota>() { a }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
-                    return;
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { a }),
+                        stack,
+                        ResolvedPatternType.ERRORED/*,
+                        result.getSound()*/);
+                    
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -378,7 +382,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Pow : OperatorBase
         {
-            public Pow(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -401,14 +405,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else 
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { a, b }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -417,7 +421,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Floor : OperatorBase
         {
-            public Floor(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota a = stack.Pop();
                 if (a is DoubleIota)
@@ -430,15 +434,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
-                
-                castResult = new CastResult(
+
+                return new CastResult(
                 new ListIota(new List<Iota>() { a }),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -447,7 +450,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Ceil : OperatorBase
         {
-            public Ceil(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 if (a is DoubleIota)
@@ -460,15 +463,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
 
-                castResult = new CastResult(
+                return new CastResult(
                 new ListIota(new List<Iota>() { a }),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -477,20 +479,20 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Sin : OperatorBase
         {
-            public Sin(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 if (a is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
                 stack.Push(new DoubleIota(Math.Sin(((DoubleIota)a).getDouble())));
-                castResult = new CastResult(
+
+                return new CastResult(
                 new ListIota(new List<Iota>() { a }),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -499,20 +501,20 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Cos : OperatorBase
         {
-            public Cos(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota a = stack.Pop();
                 if (a is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
                 stack.Push(new DoubleIota(Math.Cos(((DoubleIota)a).getDouble())));
-                castResult = new CastResult(
+
+                return new CastResult(
                 new ListIota(new List<Iota>() { a }),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -521,20 +523,20 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Tan : OperatorBase
         {
-            public Tan(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota a = stack.Pop();
                 if (a is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
                 stack.Push(new DoubleIota(Math.Tan(((DoubleIota)a).getDouble())));
-                castResult = new CastResult(
+
+                return new CastResult(
                 new ListIota(new List<Iota>() { a }),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -543,20 +545,20 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Arcsin : OperatorBase
         {
-            public Arcsin(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota a = stack.Pop();
                 if (a is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
                 stack.Push(new DoubleIota(Math.Asin(((DoubleIota)a).getDouble())));
-                castResult = new CastResult(
+
+                return new CastResult(
                 new ListIota(new List<Iota>() { a}),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -565,20 +567,20 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Arccos : OperatorBase
         {
-            public Arccos(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota a = stack.Pop();
                 if (a is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
                 stack.Push(new DoubleIota(Math.Acos(((DoubleIota)a).getDouble())));
-                castResult = new CastResult(
+
+                return new CastResult(
                 new ListIota(new List<Iota>() { a }),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -587,20 +589,20 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class ArcTan : OperatorBase
         {
-            public ArcTan(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota a = stack.Pop();
                 if (a is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
                 stack.Push(new DoubleIota(Math.Atan(((DoubleIota)a).getDouble())));
-                castResult = new CastResult(
+                
+                return new CastResult(
                 new ListIota(new List<Iota>() { a }),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -609,22 +611,22 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class ArcTan2 : OperatorBase
         {
-            public ArcTan2(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
                 if (a is not DoubleIota || b is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a, b }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(new DoubleIota(Math.Atan2(((DoubleIota)b).getDouble(), ((DoubleIota)a).getDouble())));
-                castResult = new CastResult(
+
+                return new CastResult(
                 new ListIota(new List<Iota>() { a, b }),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -633,22 +635,21 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Log : OperatorBase
         {
-            public Log(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
                 if (a is not DoubleIota || b is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a, b }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(new DoubleIota(Math.Log(((DoubleIota)b).getDouble(), ((DoubleIota)a).getDouble())));
-                castResult = new CastResult(
+                return new CastResult(
                 new ListIota(new List<Iota>() { a, b }),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -657,7 +658,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Mod : OperatorBase
         {
-            public Mod(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -678,44 +679,43 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     stack.Push(new Vec3Iota(((Vec3Iota)b).getVec3().X % ((Vec3Iota)a).getVec3().X, ((Vec3Iota)b).getVec3().Y % ((Vec3Iota)a).getVec3().Y, ((Vec3Iota)b).getVec3().Z % ((Vec3Iota)a).getVec3().Z));
                 }
                 else { 
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { a, b }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
 
                 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { a, b }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
                     result.getSound()*/);
             }
         }
+        #endregion
 
-        //Vecs
+        #region Vecs
 
         public class Pack : OperatorBase
         {
-            public Pack(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
                 Iota c = stack.Pop();
                 if (a is not DoubleIota || b is not DoubleIota || c is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() {a ,b ,c}),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(new Vec3Iota(((DoubleIota)c).getDouble(), ((DoubleIota)b).getDouble() , ((DoubleIota)a).getDouble()));
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { a, b, c }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -724,17 +724,16 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class UnPack : OperatorBase
         {
-            public UnPack(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 if (a is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                        return;
                 }
 
                 Vec3d v = ((Vec3Iota)a).getVec3();
@@ -742,7 +741,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 stack.Push(new DoubleIota(v.X));
                 stack.Push(new DoubleIota(v.Y));
                 stack.Push(new DoubleIota(v.Z));
-                castResult = new CastResult(
+                return new CastResult(
                 new ListIota(new List<Iota>() { a }),
                 stack,
                 ResolvedPatternType.EVALUATED/*,
@@ -750,28 +749,29 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             }
         }
 
-        //Lists
+        #endregion
+
+        #region Lists
 
         public class Index : OperatorBase
         {
-            public Index(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota num = stack.Pop();
                 Iota list = stack.Pop();
 
                 if (list is not ListIota || num is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { list , num }),
                     stack,
                     ResolvedPatternType.ERRORED/*,
                     result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(((ListIota)list).getList()[(int)((DoubleIota)num).getDouble()]);
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list, num }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -780,7 +780,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Slice : OperatorBase
         {
-            public Slice(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota num2 = stack.Pop();
                 Iota num1 = stack.Pop();
@@ -788,17 +788,16 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 if (list is not ListIota || num1 is not DoubleIota || num2 is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { list, num1, num2 }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(new ListIota(((ListIota)list).getList().GetRange((int)((DoubleIota)num1).getDouble(), (int)((DoubleIota)num1).getDouble() +(int)((DoubleIota)num1).getDouble())));
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list, num1, num2 }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -807,26 +806,26 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Append : OperatorBase
         {
-            public Append(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota any = stack.Pop();
                 Iota list = stack.Pop();
 
                 if (list is not ListIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { list, any }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
 
                 ((ListIota)list).getList().Add(any);
 
                 stack.Push(list);
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list, any }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -835,26 +834,26 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class UnAppend : OperatorBase
         {
-            public UnAppend(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota list2 = stack.Pop();
                 Iota list1 = stack.Pop();
 
                 if (list1 is not ListIota || list2 is not ListIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { list1, list2 }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
 
                 ((ListIota)list1).getList().AddRange(((ListIota)list2).getList());
 
                 stack.Push(list1);
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list1, list2 }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -863,25 +862,25 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Rev : OperatorBase
         {
-            public Rev(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota list = stack.Pop();
 
                 if (list is not ListIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                     new ListIota(new List<Iota>() { list }),
                     stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
 
                 ((ListIota)list).getList().Reverse();
 
                 stack.Push(list);
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -890,24 +889,24 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Index_Of : OperatorBase
         {
-            public Index_Of(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota any = stack.Pop();
                 Iota list = stack.Pop();
 
                 if (list is not ListIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { list, any }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
 
                 stack.Push(new DoubleIota(((ListIota)list).getList().IndexOf(any)));
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list, any }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -916,26 +915,26 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Remove : OperatorBase
         {
-            public Remove(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota num = stack.Pop();
                 Iota list = stack.Pop();
 
                 if (list is not ListIota && num is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { list, num }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
 
                 ((ListIota)list).getList().RemoveAt((int)((DoubleIota)num).getDouble());
 
                 stack.Push(list);
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list, num }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -944,7 +943,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Replace : OperatorBase
         {
-            public Replace(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota any = stack.Pop();
                 Iota num = stack.Pop();
@@ -952,19 +951,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 if (list is not ListIota && num is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { list, num, any }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
 
                 ((ListIota)list).getList()[((int)((DoubleIota)num).getDouble())] = any;
 
                 stack.Push(list);
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list, num, any }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -973,17 +972,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Cons : OperatorBase
         {
-            public Cons(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota num = stack.Pop();
                 if (num is not DoubleIota || ((int)((DoubleIota)num).getDouble())>= stack.stack.Count)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { num }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
 
                 ListIota acc = new ListIota(new List<Iota>());
@@ -995,7 +994,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 stack.Push(acc);
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { num , acc }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -1004,17 +1003,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class UnCons : OperatorBase
         {
-            public UnCons(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota list = stack.Pop();
                 if (list is not ListIota )
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { list }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
 
                 foreach (Iota I in ((ListIota)list).getList())
@@ -1022,7 +1021,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     stack.Push(I);
                 }
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -1031,23 +1030,23 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class EMPTY_LIST : OperatorBase
         {
-            public EMPTY_LIST(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 stack.Push(new ListIota());
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
                     result.getSound()*/);
             }
         }
+#endregion
 
-
-        //Boolian Logic,Comparisons, & Sets
+        #region Boolian Logic,Comparisons, & Sets
 
         public class And : OperatorBase
         {
-            public And(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -1055,7 +1054,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(new BoolIota(((BoolIota)a).getBool() && ((BoolIota)b).getBool()));
 
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1063,19 +1062,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
             }
         }
 
         public class Or : OperatorBase
         {
-            public Or(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -1083,7 +1082,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(new BoolIota(((BoolIota)a).getBool() || ((BoolIota)b).getBool()));
 
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1091,19 +1090,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
             }
         }
 
         public class Xor : OperatorBase
         {
-            public Xor(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -1111,7 +1110,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(new BoolIota(((BoolIota)a).getBool() ^ ((BoolIota)b).getBool()));
 
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1119,19 +1118,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
             }
         }
 
         public class Greater : OperatorBase
         {
-            public Greater(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -1139,7 +1138,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(new BoolIota(((DoubleIota)b).getDouble() > ((DoubleIota)a).getDouble()));
 
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1147,19 +1146,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
             }
         }
 
         public class Less : OperatorBase
         {
-            public Less(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -1167,7 +1166,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(new BoolIota(((DoubleIota)b).getDouble() < ((DoubleIota)a).getDouble()));
 
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1175,19 +1174,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
             }
         }
 
         public class Greater_Eq : OperatorBase
         {
-            public Greater_Eq(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -1195,7 +1194,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(new BoolIota(((DoubleIota)b).getDouble() >= ((DoubleIota)a).getDouble()));
 
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1203,19 +1202,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
             }
         }
 
         public class Less_Eq : OperatorBase
         {
-            public Less_Eq(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
@@ -1223,7 +1222,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(new BoolIota(((DoubleIota)b).getDouble() <= ((DoubleIota)a).getDouble()));
 
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1231,24 +1230,24 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
             }
         }
         public class Equals : OperatorBase
         {
-            public Equals(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
                 stack.Push(new BoolIota((b) == (a)));
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { a, b }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -1257,14 +1256,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Not_Equal : OperatorBase
         {
-            public Not_Equal(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
                 
                 stack.Push(new BoolIota((b) != (a)));
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { a, b }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -1275,13 +1274,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
         public class Not : OperatorBase
         {
-            public Not(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota any = stack.Pop();
 
                 stack.Push(new BoolIota(!any.isTruthy()));
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { any }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -1290,13 +1289,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Bool_Coerce : OperatorBase
         {
-            public Bool_Coerce(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota any = stack.Pop();
 
                 stack.Push(new BoolIota(any.isTruthy()));
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { any }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -1305,7 +1304,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class If : OperatorBase
         {
-            public If(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota any2 = stack.Pop();
                 Iota any1 = stack.Pop();
@@ -1315,7 +1314,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(((BoolIota)Bool).getBool() ? any1 : any2);
 
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { Bool, any1, any2 }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1323,23 +1322,23 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { Bool, any1, any2 }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
             }
         }
         public class Rand : OperatorBase
         {
-            public Rand(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 stack.Push(new DoubleIota(Math.Round(api.World.Rand.Next(1000)/1000f,3)));
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() {  }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -1350,7 +1349,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
         public class Unique : OperatorBase
         {
-            public Unique(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota list = stack.Pop();
 
@@ -1365,31 +1364,30 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 stack.Push(new ListIota(temp));
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
                     result.getSound()*/);
             }
         }
+        #endregion
 
-
-        // Meta-Evaluation
-
+        #region Meta-Evaluation
         public class Eval : OperatorBase
         {
-            public Eval(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 bool first = stack == 0;
                 stack.stack.TryPop(out Iota list);
                 if (list is not ListIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { list }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
+                    
                 }
                 int listing = 0;
                 bool click = false;
@@ -1436,12 +1434,12 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     }
                     else if (i is not PatternIota) //If eval, and can't
                     {
-                        castResult = new CastResult(
+                        return new CastResult(
                             new ListIota(new List<Iota>() { list }),
                             stack,
                             ResolvedPatternType.ERRORED/*,
                             result.getSound()*/);
-                        return;
+                        
                     }
                     else //If eval
                     { 
@@ -1456,30 +1454,29 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                         }
                         else
                         {
-                            castResult = pattern.execute(player, api, stack);
+                            CastResult castResult = pattern.execute(player, api, stack);
                             if (!castResult.resolutionType.success)
                             {
                                 if (first)
                                 {
-                                    ((IServerPlayer)((EntityPlayer)player)?.Player)?.SendMessage(0, castResult.cast.ToString(), EnumChatType.CommandError);
+                                    ((IServerPlayer)((EntityPlayer)player)?.Player)?.SendMessage(0, string.Format("<i><font color = \"{0}\">{1}</font></i>" ,castResult.resolutionType.colour.ToString("X6"), castResult.cast.ToString()), EnumChatType.Notification);
                                 }
-                                return;
+                                return castResult;
                             }
                         }
                     }
                 }
                 if (click || listing > 0)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { list }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -1490,18 +1487,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class FOR_EACH : OperatorBase
         {
-            public FOR_EACH(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 stack.stack.TryPop(out Iota list);
                 stack.stack.TryPop(out Iota Patterns);
                 if (list is not ListIota || Patterns is not ListIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { list , Patterns }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 foreach(Iota i in ((ListIota)list).getList())
@@ -1509,31 +1505,30 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     State inner = new(i);
                     inner.evals = stack.evals;
                     inner.Push(Patterns);
-                    Eval n = new Eval(player, api, inner);
+                    Eval n = new Eval();
+                    CastResult castResult = n.Run(player, api, inner);
                     stack.Push(inner.Open());
-                    if (!n.castResult.resolutionType.success)
+                    if (!castResult.resolutionType.success)
                     {
-                        castResult = n.castResult;
-                        
-                        return;
+                        return castResult;
                     }
                     stack.evals = inner.evals;
                 }
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { list }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
                     result.getSound()*/);
             }
         }
+#endregion
 
-
-        //Read and Write
+        #region Read and Write
 
         public class Read : OperatorBase
         {
-            public Read(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 ItemStack Offhand = ((EntityPlayer)player)?.Player.InventoryManager?.OffhandHotbarSlot?.Itemstack;
                 if (Offhand is not null)
@@ -1542,14 +1537,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1558,33 +1552,31 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Write : OperatorBase
         {
-            public Write(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota Data = stack.Pop();
                 if (Data is not null)
                 {
                     if(Data is ListIota list)
                     {
-                        if (list.containedPlayerUids.Length > 1 || list.containedPlayerUids[0] != (player as EntityPlayer).PlayerUID)
+                        if (list.containedPlayerUids.Length > 1 || (list.containedPlayerUids.Length > 0 && list.containedPlayerUids[0] != (player as EntityPlayer).PlayerUID))
                         {
-                            castResult = new CastResult(
+                            return new CastResult(
                                  new ListIota(new List<Iota>() { Data }),
                                  stack,
                                  ResolvedPatternType.ERRORED/*,
                                  result.getSound()*/);
-                            return;
                         }
                     }
                     else if (Data is EntityIota entity)
                     {
                         if ((entity.getEntity() as EntityPlayer).PlayerUID != (player as EntityPlayer).PlayerUID) 
                         {
-                            castResult = new CastResult(
+                            return new CastResult(
                                  new ListIota(new List<Iota>() { Data }),
                                  stack,
                                  ResolvedPatternType.ERRORED/*,
                                  result.getSound()*/);
-                            return;
                         }
                     }
                     ItemStack Offhand = ((EntityPlayer)player)?.Player.InventoryManager?.OffhandHotbarSlot?.Itemstack;
@@ -1592,28 +1584,28 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { Data }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { Data }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
                         result.getSound()*/);
             }
         }
+#endregion
 
-        // Basics
+        #region Basics
         public class Get_caster : OperatorBase
         {
-            public Get_caster(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 stack.Push(new EntityIota(player));
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -1622,7 +1614,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Entity_PosEye : OperatorBase
         {
-            public Entity_PosEye(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota e = stack.Pop();
                 if (e is EntityIota)
@@ -1631,14 +1623,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1647,7 +1638,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Entity_PosFoot : OperatorBase
         {
-            public Entity_PosFoot(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota e = stack.Pop();
                 if (e is EntityIota)
@@ -1656,14 +1647,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1673,7 +1663,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         
         public class Entity_Look : OperatorBase
         {
-            public Entity_Look(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota e = stack.Pop();
                 if (e is EntityIota)
@@ -1688,14 +1678,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1706,7 +1695,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
         public class RayCast : OperatorBase
         {
-            public RayCast(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota Dir = stack.Pop();
                 Iota Start = stack.Pop();
@@ -1732,14 +1721,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1748,7 +1736,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class RayCast_Axis : OperatorBase
         {
-            public RayCast_Axis(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota Dir = stack.Pop();
                 Iota Start = stack.Pop();
@@ -1774,14 +1762,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1790,7 +1777,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class RayCast_Entity : OperatorBase
         {
-            public RayCast_Entity(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota Dir = stack.Pop();
                 Iota Start = stack.Pop();
@@ -1816,14 +1803,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1834,7 +1820,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
         public class Print : OperatorBase
         {
-            public Print(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota any = stack.Pop();
 
@@ -1844,7 +1830,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     stack.Push(any);
                 }
                 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { any }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -1853,7 +1839,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Entity_Height : OperatorBase
         {
-            public Entity_Height(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota e = stack.Pop();
                 if (e is EntityIota)
@@ -1862,14 +1848,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -1880,7 +1865,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         
         public class Entity_Velocity : OperatorBase
         {
-            public Entity_Velocity(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota e = stack.Pop();
                 if (e is EntityIota)
@@ -1889,196 +1874,35 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
                         result.getSound()*/);
             }
         }
+        #endregion
 
-        // Constants
+        #region Constants
 
-        // True Reflection (→ bool)
-        public class Const_True : OperatorBase
+
+        public class Const : OperatorBase
         {
-            public Const_True(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            Iota output;
+            public Const(Iota output) 
             {
-                
-                stack.Push(new BoolIota(true));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() {}),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
+                this.output = output;
             }
-        }
-        // False Reflection (→ bool)
-        public class Const_False : OperatorBase
-        {
-            public Const_False(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
-
-                stack.Push(new BoolIota(false));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() { }),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        // Nullary Reflection (→ null)
-        public class Const_Null : OperatorBase
-        {
-            public Const_Null(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new NullIota());
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() { }),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        // Vector Reflection Zero (→ vector)
-        public class Const_Vec_Zero : OperatorBase
-        {
-            public Const_Vec_Zero(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new Vec3Iota(0,0,0));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() {}),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        // Vector Rfln. +X/-X (→ vector)
-        public class Const_Vec_X_Pos : OperatorBase
-        {
-            public Const_Vec_X_Pos(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new Vec3Iota(1, 0, 0));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() { }),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        public class Const_Vec_X_Neg : OperatorBase
-        {
-            public Const_Vec_X_Neg(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new Vec3Iota(-1, 0, 0));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() { }),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        // Vector Rfln. +Y/-Y (→ vector)
-        public class Const_Vec_Y_Pos : OperatorBase
-        {
-            public Const_Vec_Y_Pos(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new Vec3Iota(0, 1, 0));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() { }),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        public class Const_Vec_Y_Neg : OperatorBase
-        {
-            public Const_Vec_Y_Neg(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new Vec3Iota(0, -1, 0));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() { }),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        // Vector Rfln. +Z/-Z (→ vector)
-        public class Const_Vec_Z_Pos : OperatorBase
-        {
-            public Const_Vec_Z_Pos(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new Vec3Iota(0, 0, 1));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() { }),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        public class Const_Vec_Z_Neg : OperatorBase
-        {
-            public Const_Vec_Z_Neg(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new Vec3Iota(0, 0, -1));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>()   { }),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        // Circle's Reflection (→ num)
-        public class Const_Tau : OperatorBase
-        {
-            public Const_Tau(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new DoubleIota(Math.Tau));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() { }),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        // Arc's Reflection (→ num)
-        public class Const_Pi : OperatorBase
-        {
-            public Const_Pi(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new DoubleIota(Math.PI));
-                castResult = new CastResult(
-                        new ListIota(new List<Iota>() { }),
-                        stack,
-                        ResolvedPatternType.EVALUATED/*,
-                        result.getSound()*/);
-            }
-        }
-        // Euler's Reflection (→ num)
-        public class Const_E : OperatorBase
-        {
-            public Const_E(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
-            {
-
-                stack.Push(new DoubleIota(Math.E));
-                castResult = new CastResult(
+                stack.Push(output);
+                return new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2086,29 +1910,30 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             }
         }
 
-        // Stack Manipulation
+        #endregion
+
+        #region Stack Manipulation
 
         // Jester's Gambit (any, any → any, any)
         public class SWAP : OperatorBase
         {
-            public SWAP(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
 
                 if ( a is null || b is null)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(a);
                 stack.Push(b);
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2118,7 +1943,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         // Rotation Gambit (any, any, any → any, any, any)
         public class ROTATE : OperatorBase
         {
-            public ROTATE(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 Iota a = stack.Pop();
@@ -2127,18 +1952,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 if (a is null || b is null || c is null)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b, c }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(b);
                 stack.Push(a);
                 stack.Push(c);
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a, b, c }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2149,7 +1973,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         // Rotation Gambit II (any, any, any → any, any, any)
         public class ROTATE_REVERSE : OperatorBase
         {
-            public ROTATE_REVERSE(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 Iota a = stack.Pop();
@@ -2158,18 +1982,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 if (a is null || b is null || c is null)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b, c }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(a);
                 stack.Push(c);
                 stack.Push(b);
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a, b, c }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2181,24 +2004,23 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         // Gemini Decomposition (any → any, any)
         public class DUPLICATE : OperatorBase
         {
-            public DUPLICATE(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 Iota a = stack.Pop();
 
                 if (a is null )
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a}),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(a);
                 stack.Push(a);
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2210,7 +2032,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         // Prospector's Gambit (any, any → any, any, any)
         public class OVER : OperatorBase
         {
-            public OVER(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 Iota a = stack.Pop();
@@ -2218,18 +2040,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 if (a is null || b is null)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(b);
                 stack.Push(a);
                 stack.Push(b);
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2240,7 +2061,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         // Undertaker's Gambit (any, any → any, any, any)
         public class TUCK : OperatorBase
         {
-            public TUCK(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 Iota a = stack.Pop();
@@ -2248,18 +2069,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 if (a is null || b is null)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(a);
                 stack.Push(b);
                 stack.Push(a);
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2270,7 +2090,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         // Gemini Gambit (any, number → many)
         public class DUPLICATE_N : OperatorBase
         {
-            public DUPLICATE_N(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 Iota num = stack.Pop();
@@ -2278,12 +2098,11 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 if (num is null || any is null || num is not DoubleIota)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { num, any }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 for (int i = 0; i < ((DoubleIota)num).getDouble(); i++)
@@ -2291,7 +2110,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     stack.Push(any);
                 }
 
-                castResult = new CastResult(
+                return new CastResult(
                     new ListIota(new List<Iota>() { num, any }),
                     stack,
                     ResolvedPatternType.EVALUATED/*,
@@ -2302,7 +2121,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         // Dioscuri Gambit (any, any → any, any, any, any)
         public class TWO_DUP : OperatorBase
         {
-            public TWO_DUP(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 Iota a = stack.Pop();
@@ -2310,12 +2129,11 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 if (a is null || b is null)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 stack.Push(b);
@@ -2323,7 +2141,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 stack.Push(b);
                 stack.Push(a);
 
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2334,11 +2152,11 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         // Flock's Reflection (→ number)
         public class STACK_LEN : OperatorBase
         {
-            public STACK_LEN(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 stack.Push(new DoubleIota(stack.stack.Count()));
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() {  }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2348,28 +2166,26 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         // Fisherman's Gambit (number → any)
         public class FISHERMAN : OperatorBase
         {
-            public FISHERMAN(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 Iota num = stack.Pop();
 
                 if (num is null  || num is not DoubleIota || ((DoubleIota)num).getDouble() > stack.stack.Count())
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { num }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
                 if (((DoubleIota)num).getDouble() == 0)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { num }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
                         result.getSound()*/);
-                    return;
                 }
 
 
@@ -2386,35 +2202,37 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     stack.Push(tstack.Pop());
                 }
                 stack.Push(tIota);
-
+                return new CastResult(
+                        new ListIota(new List<Iota>() { num }),
+                        stack,
+                        ResolvedPatternType.EVALUATED/*,
+                        result.getSound()*/);
             }
         }
         // Fisherman's Gambit II (number → any)
         public class FISHERMAN_COPY : OperatorBase
         {
-            public FISHERMAN_COPY(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
 
                 Iota num = stack.Pop();
 
                 if (num is null || num is not DoubleIota || ((DoubleIota)num).getDouble() > stack.stack.Count())
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { num }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 if (((DoubleIota)num).getDouble() == 0)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { num }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
                         result.getSound()*/);
-                    return;
                 }
 
                 Stack<Iota> tstack = new();
@@ -2432,13 +2250,20 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 stack.Push(tIota);
 
+                return new CastResult(
+                        new ListIota(new List<Iota>() { num }),
+                        stack,
+                        ResolvedPatternType.EVALUATED/*,
+                        result.getSound()*/);
             }
         }
-        // Elements Constants
+#endregion
+
+        #region Elements Constants
 
         public class Const_Sol : OperatorBase
         {
-            public Const_Sol(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 
                 Iota pow = stack.Pop();
@@ -2452,7 +2277,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     if (pow is not null)
                         stack.Push(pow);
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2461,7 +2286,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Const_Lun : OperatorBase
         {
-            public Const_Lun(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota pow = stack.Pop();
                 if (pow is DoubleIota p)
@@ -2474,7 +2299,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     if (pow is not null)
                         stack.Push(pow);
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2483,7 +2308,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Const_Tyr : OperatorBase
         {
-            public Const_Tyr(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota pow = stack.Pop();
                 if (pow is DoubleIota p)
@@ -2496,7 +2321,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     if (pow is not null)
                         stack.Push(pow);
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2505,7 +2330,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Const_Cal : OperatorBase
         {
-            public Const_Cal(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota pow = stack.Pop();
                 if (pow is DoubleIota p)
@@ -2518,7 +2343,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     if (pow is not null)
                         stack.Push(pow);
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2527,7 +2352,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Const_Oce : OperatorBase
         {
-            public Const_Oce(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota pow = stack.Pop();
                 if (pow is DoubleIota p)
@@ -2540,7 +2365,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     if (pow is not null)
                         stack.Push(pow);
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
@@ -2549,7 +2374,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Const_Ste : OperatorBase
         {
-            public Const_Ste(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota pow = stack.Pop();
                 if (pow is DoubleIota p)
@@ -2562,18 +2387,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     if (pow is not null)
                         stack.Push(pow);
                 }
-                castResult = new CastResult(
+                return new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
                         ResolvedPatternType.EVALUATED/*,
                         result.getSound()*/);
             }
         }
-
-        //Base Spells
+        #endregion
+        
+        #region Base Spells
         public class Effect : OperatorBase
         {
-            public Effect(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota e = stack.Pop();
 
@@ -2589,14 +2415,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 if (suc)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.EVALUATED);
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
@@ -2607,7 +2433,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
         public class Explode : OperatorBase
         {
-            public Explode(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota e = stack.Pop();
 
@@ -2619,14 +2445,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 if (suc)
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.EVALUATED);
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
@@ -2636,7 +2462,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Place : OperatorBase
         {
-            public Place(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota e = stack.Pop();
 
@@ -2651,14 +2477,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     player.UseMedia(10 * ((float)stack.exp), stack.Shift().type);
                     stack.inc();
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.EVALUATED);
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e, new DoubleIota(Math.Round(player.GetMedia(), 2))}),
                         stack,
                         ResolvedPatternType.ERRORED/*,
@@ -2668,7 +2494,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
         }
         public class Project : OperatorBase
         {
-            public Project(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 bool suc = false;
                 EnumHexStrain pain = (EnumHexStrain)Math.Clamp((stack.Shift().strength - player.GetAffinities(stack.Shift().type)) / 5 , 0, 2);
@@ -2681,14 +2507,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     player.UseMedia(stack.Shift().strength * 5 * ((float)stack.exp), stack.Shift().type, pain);
                     stack.inc();
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() {  }),
                         stack,
                         ResolvedPatternType.EVALUATED);
                 }
                 else
                 {
-                    castResult = new CastResult(
+                    return new CastResult(
                         new ListIota(new List<Iota>() { new DoubleIota(Math.Round(player.GetMedia(),2)) }),
                         stack,
                         ResolvedPatternType.ERRORED/*,
@@ -2697,92 +2523,73 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             }
         }
 
-
-        // Extra Spells 
-        /*public class Ignite : OperatorBase
+        public class Charge : OperatorBase
         {
-            new static int cost = 1;
-            public Ignite(Entity player, ICoreAPI api, State stack) : base(player, api, stack)
+            public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
-                if (!player.CanUseMedia(cost))
-                {
-                    castResult = new CastResult(
-                        new ListIota(new List<Iota>() { new DoubleIota(player.GetMedia()) }),
-                        stack,
-                        ResolvedPatternType.ERRORED);
-                    return;
-                }
-
                 Iota e = stack.Pop();
-                if (e is EntityIota)
+
+                bool suc = false;
+
+                if (e is DoubleIota num)
                 {
-                    
-                    ((EntityIota) e).getEntity().Ignite();
-                }
-                                else if (e is Vec3Iota)
-                {
-
-
-                    Vec3d pos = ((Vec3Iota)e).getVec3();
-
-                    BlockPos block_pos = new BlockPos((int)pos.X, (int)pos.Y, (int)pos.Z);
-
-                    //Vintagestory.API.Common.BlockEntity block = player.World.BlockAccessor.GetBlockEntity(block_pos);
-
-                    IBlockAccessor blockAcc = player.World.GetBlockAccessor(true, true, true);
-
-                    Block block = blockAcc.GetBlock(block_pos);
-
-                    IIgnitable ign = block?.GetInterface<IIgnitable>(player.World, block_pos);
-                    if (ign != null)
+                    if (player.CanUseMedia(10 * (Math.Min((float)stack.exp, (float)num.getDouble()*5))))
                     {
-                        ign.OnTryIgniteBlock((EntityAgent)player, block_pos, 100);
-                        EnumHandling handling = EnumHandling.PreventDefault;
-                        ign.OnTryIgniteBlockOver((EntityAgent)player, block_pos, 100, ref handling);
-                    }
-                    else
-                    {
-
-                        for (int x = -1; x <= 1; x++)
+                        ItemStack Offhand = ((EntityPlayer)player)?.Player.InventoryManager?.OffhandHotbarSlot?.Itemstack;
+                        if (Offhand is not null)
                         {
-                            for (int y = -1; y <= 1; y++)
+                            if ((Offhand.Attributes.TryGetInt("mediamaxcharge") ?? 0) is int maxcharge) 
                             {
-                                for (int z = -1; z <= 1; z++)
+                                
+                                Element ele = stack.Shift();
+                                int charge = (int)Math.Floor(Math.Min(num.getDouble(), (double)maxcharge));
+
+                                IAttribute elementAtt;
+                                Offhand.Attributes.TryGetAttribute("element", out elementAtt);
+
+                                string currentelement = ((StringAttribute)elementAtt)?.value ?? "";
+
+                                int currentcharge = Offhand.Attributes.TryGetInt("charge") ?? -1;
+
+                                if (currentcharge < charge && charge <= maxcharge)
                                 {
-                                    BlockPos bpos = block_pos.AddCopy(x, y, z);
-
-                                    block = blockAcc.GetBlock(bpos);
-
-                                    if (block.BlockId == 0)
+                                    if (currentelement == "" || (ele.type == "" ? "media" : ele.type) == currentelement)
                                     {
-                                        blockAcc.SetBlock(player.World.GetBlock(new AssetLocation("fire")).BlockId, bpos);
-                                        Vintagestory.API.Common.BlockEntity befire = blockAcc.GetBlockEntity(bpos);
-                                        befire?.GetBehavior<BEBehaviorBurning>()?.OnFirePlaced(bpos, block_pos, (player as EntityPlayer).PlayerUID);
+                                        Offhand.Attributes.SetString("element", (ele.type == "" ? "media" : ele.type));
+                                        Offhand.Attributes.SetInt("charge", charge);
+                                        suc = true;
                                     }
                                 }
                             }
                         }
                     }
-
+                        
                 }
-                else
+
+                if (suc)
                 {
-
-                    castResult = new CastResult(
-                        new ListIota(new List<Iota>() { e }),
-                        stack,
-                        ResolvedPatternType.ERRORED);
-                    return;
-                }
-
-                player.UseMedia(cost);
-
-                castResult = new CastResult(
+                    player.UseMedia(10 * (Math.Min((float)stack.exp, (float)((DoubleIota)e).getDouble() * 5)), stack.Shift().type);
+                    stack.inc();
+                    return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
                         ResolvedPatternType.EVALUATED);
+                }
+                else
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { e, new DoubleIota(Math.Round(player.GetMedia(), 2)) }),
+                        stack,
+                        ResolvedPatternType.ERRORED/*,
+                        result.getSound()*/);
+                }
             }
-        }*/
+        }
+
+        #endregion
+
+        // Extra Spells 
+
 
     }
 

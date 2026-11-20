@@ -59,7 +59,7 @@
   },
   "shapeByType": {
     "*-unsealed": { "base": "item/foci" },
-    "*-sealed": { "base": "item/scroll-unbound" }
+    "*-sealed": { "base": "item/foci" }
   },
   "textures": {
     "gem": { "base": "game:block/stone/gem/{gem}" },

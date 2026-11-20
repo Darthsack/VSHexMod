@@ -66,8 +66,8 @@ namespace VSHexMod
 
         public HexIotaTypes IotaTypesReg;
 
-        public Dictionary<string, Type> HexRegistry = new Dictionary<string, Type>();
-        public void RegisterHex(string signiture, Type eval)
+        public Dictionary<string, OperatorBase> HexRegistry = new Dictionary<string, OperatorBase>();
+        public void RegisterHex(string signiture, OperatorBase eval)
         {
             HexRegistry.Add(signiture, eval);
         }
@@ -184,7 +184,7 @@ namespace VSHexMod
             State castState = new(new ListIota(((string[])castingItem?.Attributes["spell"].GetValue()).Select((r) => (Iota)new PatternIota(ResolvedPattern.FromString(r).pattern)).ToList()));
             castState.SetMaxPower(fromPlayer.Entity.GetAffinities());
 
-            ThreadStart star = new(() => new Spells.Eval(fromPlayer.Entity,api, castState));
+            ThreadStart star = new(() => new Spells.Eval().Run(fromPlayer.Entity,api, castState));
             Thread vm = new(star);
             vm.Start();
             fromPlayer.Entity.ActiveHandItemSlot.TakeOut(1);
@@ -244,7 +244,7 @@ namespace VSHexMod
     }
     public static partial class apiHelper
     {
-        public static void RegisterHex(this ICoreAPI api, string signiture, Type eval)
+        public static void RegisterHex(this ICoreAPI api, string signiture, OperatorBase eval)
         {
             api.ModLoader.GetModSystem<VSHexModModSystem>().RegisterHex(signiture, eval);
         }

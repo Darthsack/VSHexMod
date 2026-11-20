@@ -14,7 +14,7 @@ namespace VSHexMod.Inventory
     public class InventoryHexScribe : InventoryBase, ISlotProvider
     {
 
-        ItemSlot[] slots = new ItemSlot[0];
+        ItemSlot[] slots = [];
         public BlockPos pos;
 
         public ItemSlot[] Slots
@@ -45,12 +45,12 @@ namespace VSHexMod.Inventory
 
         public override float GetSuitability(ItemSlot sourceSlot, ItemSlot targetSlot, bool isMerge)
         {
-            ItemStack stack = sourceSlot.Itemstack;
+            //ItemStack stack = sourceSlot.Itemstack;
 
-            if (targetSlot == slots[1] && (stack.Collectible is BlockSmeltingContainer || stack.Collectible is BlockCookingContainer)) return 2.2f;
+            //if (targetSlot == slots[1] && (stack.Collectible is BlockSmeltingContainer || stack.Collectible is BlockCookingContainer)) return 2.2f;
 
-            if (targetSlot == slots[0] && (stack.Collectible.CombustibleProps == null || stack.Collectible.CombustibleProps.BurnTemperature <= 0)) return 0;
-            if (targetSlot == slots[1] && (stack.Collectible.CombustibleProps == null || stack.Collectible.CombustibleProps.SmeltedStack == null)) return 0.5f;
+            //if (targetSlot == slots[0] && (stack.Collectible.CombustibleProps == null || stack.Collectible.CombustibleProps.BurnTemperature <= 0)) return 0;
+            //if (targetSlot == slots[1] && (stack.Collectible.CombustibleProps == null || stack.Collectible.CombustibleProps.SmeltedStack == null)) return 0.5f;
 
 
             return base.GetSuitability(sourceSlot, targetSlot, isMerge);
@@ -80,6 +80,8 @@ namespace VSHexMod.Inventory
         public override bool CanContain(ItemSlot sinkSlot, ItemSlot sourceSlot)
         {
             int slotid = GetSlotId(sinkSlot);
+
+            if (slotid == 1) return sourceSlot.Itemstack.Attributes.GetAsString("spell") != null;
             return slotid < 3 || base.CanContain(sinkSlot, sourceSlot);
         }
         public override int Count

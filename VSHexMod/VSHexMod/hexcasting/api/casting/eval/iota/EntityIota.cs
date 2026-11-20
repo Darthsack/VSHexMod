@@ -59,9 +59,27 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
                 writer.Write(val.EntityId);
             }
         }
+        public override void ToBytes(BinaryWriter writer, ICoreAPI api, List<string> NameKey)
+        {
+            writer.Write((byte)NameKey.FindIndex((k) => k == api.GetIotaKey(this)));
+
+            Entity val = getEntity();
+            EntityPlayer e = val as EntityPlayer;
+            if (e is not null)
+            {
+                writer.Write(true);
+                writer.Write(e.PlayerUID);
+            }
+            else
+            {
+                writer.Write(false);
+                writer.Write(val.EntityId);
+            }
+        }
 
         public override Iota FromBytes(BinaryReader reader, IWorldAccessor resolver)
         {
+            Entity payload;
             if (!reader.ReadBoolean())
             {
                 payload = resolver.GetEntityById(reader.ReadInt64());
@@ -70,7 +88,7 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
             {
                 payload = resolver.PlayerByUid(reader.ReadString())?.Entity;
             }
-            return new EntityIota((Entity)payload);
+            return new EntityIota(payload);
         }
     }
 }
