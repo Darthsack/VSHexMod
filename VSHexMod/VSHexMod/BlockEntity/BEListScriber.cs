@@ -53,7 +53,7 @@ namespace VSHexMod.BlockEntity
         public BEListScriber()
         {
             inventory = new InventoryHexScribe(null, null);
-            inventory.SlotModified += OnSlotModifid;
+            inventory.SlotModified += OnSlotModified;
 
 
         }
@@ -81,7 +81,7 @@ namespace VSHexMod.BlockEntity
             locApi = api;
         }
 
-        private void OnSlotModifid(int slotid)
+        private void OnSlotModified(int slotid)
         {
             Block = Api.World.BlockAccessor.GetBlock(Pos);
 
