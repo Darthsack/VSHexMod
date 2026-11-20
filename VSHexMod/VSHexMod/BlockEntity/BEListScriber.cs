@@ -1,22 +1,23 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Vintagestory.API.Client;
-using Vintagestory.API.Server;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.Server;
+using Vintagestory.API.Util;
 using Vintagestory.GameContent;
+using VSHexMod.Crafting;
 using VSHexMod.Gui;
 using VSHexMod.hexcasting.api.casting.eval;
-using VSHexMod.Inventory;
-using VSHexMod.Crafting;
-using HarmonyLib;
-using Vintagestory.API.Util;
-using System.IO;
 using VSHexMod.hexcasting.api.casting.math;
+using VSHexMod.Inventory;
 
 namespace VSHexMod.BlockEntity
 {
@@ -64,6 +65,8 @@ namespace VSHexMod.BlockEntity
             inventory.pos = Pos;
             inventory.LateInitialize("hexcastingtable-" + Pos.X + "/" + Pos.Y + "/" + Pos.Z, api);
 
+            UpdateScroll();
+
             //RegisterGameTickListener(OnBurnTick, 100);
             //RegisterGameTickListener(On500msTick, 500);
 
@@ -90,18 +93,32 @@ namespace VSHexMod.BlockEntity
             //{
             //    SetDialogValues(clientDialog.Attributes);
             //}
-            if (inventory.Slots[1]?.Itemstack is not null && inventory.Slots[1].Itemstack.Attributes.HasAttribute("spell") && Api.Side == EnumAppSide.Client)
+            if (slotid == 1 && Api.Side == EnumAppSide.Client)
             {
-                string[] pats =  (inventory.Slots[1].Itemstack.Attributes["spell"]).GetValue() as string[];
-
-                hexpatterns.Clear();
-
-                hexpatterns.AddRange(pats.Select((r) => ResolvedPattern.FromString(r)));
-                clientDialog.SingleComposer.ReCompose();
+                UpdateScroll();
             }
 
             Api.World.BlockAccessor.GetChunkAtBlockPos(Pos)?.MarkModified();
             
+        }
+
+        public void UpdateScroll()
+        {
+            if (scrollStack is not null && scrollStack.Attributes.HasAttribute("spell"))
+            {
+                string[] pats = (scrollStack.Attributes["spell"]).GetValue() as string[];
+
+                if (scrollStack.Attributes.HasAttribute("title"))
+                    title = scrollStack.Attributes["title"].GetValue() as string;
+
+                hexpatterns.Clear();
+
+                hexpatterns.AddRange(pats.Select((r) => ResolvedPattern.FromString(r)));
+
+                clientDialog?.SingleComposer?.GetTextArea("text").SetValue(title);
+
+                clientDialog?.SingleComposer?.ReCompose();
+            }
         }
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
@@ -112,7 +129,7 @@ namespace VSHexMod.BlockEntity
                 toggleInventoryDialogClient(byPlayer, () => {
                     //SyncedTreeAttribute dtree = new SyncedTreeAttribute();
                     //SetDialogValues(dtree);
-                    clientDialog = new GuiDialogBlockEntityListScriber(DialogTitle, Inventory, Pos, Api as ICoreClientAPI, hexpatterns);
+                    clientDialog = new GuiDialogBlockEntityListScriber(DialogTitle, Inventory, Pos, Api as ICoreClientAPI, hexpatterns, title);
                     return clientDialog;
                 });
 
@@ -199,69 +216,73 @@ namespace VSHexMod.BlockEntity
 
         public bool InscribeSpell(ICoreAPI api, double blood)
         {
-            if (inventory.Slots[2]?.Itemstack?.StackSize is not null && inventory.Slots[2].Itemstack.StackSize != 0)
-                return false;
-
+           
             //api.Logger.Event(inventory?.Slots[0]?.Itemstack?.Item?.Attributes?["spell"].ToString());
 
 
             bool crafted = false;
-            if (inventory.Slots[0].Itemstack is null || !inventory.Slots[0].Itemstack.Item.Attributes.KeyExists("spell"))
+            if ((paperStack is null || !paperStack.Item.Attributes.KeyExists("spell") ) && outputStack?.StackSize == 0)
             {
                 if (!FindMatchingRecipe())
                     return false;
                 crafted = true;
             }
 
-            if (inventory.Slots[1]?.Itemstack is not null && inventory.Slots[1].Itemstack.Attributes.HasAttribute("spell"))
+            if (scrollStack is not null && scrollStack.Attributes.HasAttribute("spell") && (outputStack is null || outputStack.StackSize == 0 ))
             {
-                inventory.Slots[2].Itemstack = inventory.Slots[1].Itemstack.Clone();
-                inventory.Slots[2].Itemstack.Attributes = inventory.Slots[1].Itemstack.Attributes.Clone();
+                outputStack = scrollStack.Clone();
+                outputStack.Attributes = scrollStack.Attributes.Clone();
 
                 if (!crafted)
-                    inventory.Slots[0].TakeOut(1);
-                inventory.Slots[2].Itemstack.StackSize = 1;
+                    paperSlot.TakeOut(1);
+                outputStack.StackSize = 1;
 
-                inventory.Slots[0].MarkDirty();
-                inventory.Slots[2].MarkDirty();
+                paperSlot.MarkDirty();
+                outputSlot.MarkDirty();
 
                 return true;
             }
 
-            if (inventory?.Slots[2]?.Itemstack?.StackSize is null || inventory.Slots[2].Itemstack.StackSize < 1)
+            else if (outputStack?.StackSize is null || outputStack.StackSize < 1)
             {
-                inventory.Slots[2].Itemstack = inventory.Slots[0].Itemstack.Clone();
+                outputStack = paperStack.Clone();
                 if (!crafted)
-                    inventory.Slots[0].TakeOut(1);
-                inventory.Slots[2].Itemstack.StackSize = 1;
+                    paperSlot.TakeOut(1);
+                outputStack.StackSize = 1;
             }
 
             //inventory.Slots[2].Itemstack.Attributes.GetOrAddTreeAttribute("spell");
 
             string[] att = hexpatterns.Select((r) => r.ToString()).ToArray();
 
-            inventory.Slots[2].Itemstack.Attributes["spell"] = new StringArrayAttribute(att);
-            inventory.Slots[2].Itemstack.Attributes["title"] = new StringAttribute(title);
-            if (inventory.Slots[0].Itemstack?.StackSize == 0)
-                inventory.Slots[0].Itemstack = null;
-            
-            inventory.Slots[0].MarkDirty();
-            inventory.Slots[2].MarkDirty();
+            outputStack.Attributes["spell"] = new StringArrayAttribute(att);
+            outputStack.Attributes["title"] = new StringAttribute(title);
+            if (paperStack?.StackSize == 0)
+                paperStack = null;
+
+            paperSlot.MarkDirty();
+            outputSlot.MarkDirty();
             return true;
         }
 
 
-
+        /// <summary>
+        /// inventory[0]
+        /// </summary>
         public ItemSlot paperSlot
         {
             get { return inventory[0]; }
         }
-
+        /// <summary>
+        /// inventory[1]
+        /// </summary>
         public ItemSlot scrollSlot
         {
             get { return inventory[1]; }
         }
-
+        /// <summary>
+        /// inventory[2]
+        /// </summary>
         public ItemSlot outputSlot
         {
             get { return inventory[2]; }
@@ -269,23 +290,29 @@ namespace VSHexMod.BlockEntity
 
 
 
-
+        /// <summary>
+        /// paperSlot?.Itemstack
+        /// </summary>
         public ItemStack paperStack
         {
-            get { return inventory[0].Itemstack; }
-            set { inventory[0].Itemstack = value; inventory[0].MarkDirty(); }
+            get { return paperSlot?.Itemstack; }
+            set { paperSlot.Itemstack = value; paperSlot.MarkDirty(); }
         }
-
+        /// <summary>
+        /// scrollSlot?.Itemstack
+        /// </summary>
         public ItemStack scrollStack
         {
-            get { return inventory[1].Itemstack; }
-            set { inventory[1].Itemstack = value; inventory[1].MarkDirty(); }
+            get { return scrollSlot?.Itemstack; }
+            set { scrollSlot.Itemstack = value; scrollSlot.MarkDirty(); }
         }
-
+        /// <summary>
+        /// outputSlot?.Itemstack
+        /// </summary>
         public ItemStack outputStack
         {
-            get { return inventory[2].Itemstack; }
-            set { inventory[2].Itemstack = value; inventory[2].MarkDirty(); }
+            get { return outputSlot?.Itemstack; }
+            set { outputSlot.Itemstack = value; outputSlot.MarkDirty(); }
         }
 
     }

@@ -25,9 +25,13 @@ namespace VSHexMod.Gui
         EnumPosFlag screenPos;
 
         List<ResolvedPattern> patterns;
-        public GuiDialogBlockEntityListScriber(string dlgTitle, InventoryBase Inventory, BlockPos bePos, ICoreClientAPI capi,List<ResolvedPattern> patterns) : base(dlgTitle, Inventory, bePos, capi)
+
+        string SpellName = "";
+        public GuiDialogBlockEntityListScriber(string dlgTitle, InventoryBase Inventory, BlockPos bePos, ICoreClientAPI capi,List<ResolvedPattern> patterns, string SpellName = "") : base(dlgTitle, Inventory, bePos, capi)
         {
             if (IsDuplicate) return;
+
+            this.SpellName = SpellName;
 
             this.patterns = patterns;
 
@@ -76,7 +80,7 @@ namespace VSHexMod.Gui
                 //and finally add the text in the text box.
                 .BeginChildElements(bgBounds)
                     .BeginClip(clippingBounds)
-                    .AddHexGrid(textBounds, patterns)
+                        .AddHexGrid(textBounds, patterns)
                     .EndClip()
                     .AddTextArea(textAreaBounds, OnTextAreaChanged, font, "text")
                     .AddItemSlotGrid(Inventory, SendInvPacket, 1, new int[] { 0 }, PaperBounds, "paperslot")
@@ -89,6 +93,9 @@ namespace VSHexMod.Gui
                 .EndChildElements()
                 //Calling compose is what actually 'builds' the Gui menu.
                 .Compose();
+
+            SingleComposer.GetTextArea("text").SetValue(SpellName);
+            SingleComposer.ReCompose();
         }
 
         private bool OnButtonSave()
