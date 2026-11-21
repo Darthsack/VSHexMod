@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Vintagestory.API.Common;
 
 using Vintagestory.API.Common.Entities;
-
 using VSHexMod.hexcasting.api.casting.math;
 
 namespace VSHexMod.hexcasting.api.casting.eval.iota
@@ -50,7 +49,8 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
             return new CastResult(
                 this,
                 Current,
-                ResolvedPatternType.INVALID
+                ResolvedPatternType.INVALID,
+                new(QuickMishap.ExecuteInvalid, [ToString()])
                 /*HexEvalSounds.MISHAP*/);
         }
 

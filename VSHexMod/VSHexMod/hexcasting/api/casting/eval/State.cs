@@ -54,7 +54,7 @@ namespace VSHexMod.hexcasting.api.casting.eval
         public Iota Pop()
         {
             stack.TryPop(out Iota i);
-            return i;
+            return i ?? new GarbageIota();
         }
 
         public void Push(Iota I)

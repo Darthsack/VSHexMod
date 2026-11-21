@@ -14,14 +14,16 @@ namespace VSHexMod.hexcasting.api.casting.eval
         public Iota cast;
         public State continuation;
         public ResolvedPatternType resolutionType;
+
+        public Mishap mishap;
         //public EvalSound sound;
 
-        public CastResult(Iota cast, State continuation,  ResolvedPatternType resolutionType /*,EvalSound sound*/)
+        public CastResult(Iota cast, State continuation,  ResolvedPatternType resolutionType , Mishap mishap = null)
         {
             this.cast = cast;
             this.continuation = continuation;
             this.resolutionType = resolutionType;
-            //this.sound = sound;
+            this.mishap = mishap ?? new Mishap();
         }
     }
 }

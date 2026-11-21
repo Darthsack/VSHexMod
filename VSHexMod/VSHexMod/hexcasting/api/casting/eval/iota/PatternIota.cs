@@ -56,8 +56,8 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
                 return new CastResult(
                     this,
                     Current,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                    ResolvedPatternType.ERRORED,
+                    new(QuickMishap.ExecuteOverload, ["1000"]));
             Current++;
 
             api.ModLoader.GetModSystem<VSHexModModSystem>().HexRegistry.TryGetValue(this.getPattern().anglesSignature(), out OperatorBase lookup);
@@ -140,8 +140,8 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
                             return new CastResult(
                                 this,
                                 Current,
-                                ResolvedPatternType.ERRORED/*,
-                                result.getSound()*/);
+                                ResolvedPatternType.ERRORED,
+                                new(QuickMishap.ExecuteNotFound, [ToString()]));
                         }
                         HexAngle angle2 = directions[i + 1].angleFrom(flatDir);
                         if (angle == HexAngle.RIGHT && angle2 == HexAngle.LEFT)
@@ -154,8 +154,8 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
                         return new CastResult(
                             this,
                             Current,
-                            ResolvedPatternType.ERRORED/*,
-                            result.getSound()*/);
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.ExecuteNotFound, [ToString()]));
                     }
                     mask.Reverse();
                     List<Iota> temp = new List<Iota>();
@@ -165,8 +165,8 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
                             return new CastResult(
                             this,
                             Current,
-                            ResolvedPatternType.ERRORED/*,
-                            result.getSound()*/);
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, ["Iota", "Garbage"]));
                         if (b)
                             temp.Add(n);
                     }
@@ -193,8 +193,8 @@ namespace VSHexMod.hexcasting.api.casting.eval.iota
                 return new CastResult(
                 this,
                 Current,
-                ResolvedPatternType.ERRORED/*,
-                result.getSound()*/);
+                ResolvedPatternType.ERRORED,
+                new(QuickMishap.ExecuteError));
             }
         }
 

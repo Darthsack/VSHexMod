@@ -211,11 +211,25 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    return new CastResult(
-                        new ListIota(new List<Iota>() { a, b }),
-                        Current,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                    if( a is not DoubleIota && a is not Vec3Iota && a is not ListIota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            Current,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota/ListIota", a.ToString()));
+                    if((a is DoubleIota || a is Vec3Iota))
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            Current,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", b.ToString()));
+
+                    if (a is ListIota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            Current,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "ListIota", b.ToString()));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
@@ -250,12 +264,20 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    return new CastResult(
-                        new ListIota(new List<Iota>() { a, b }),
-                        stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                    if (a is not DoubleIota && a is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", a.ToString()));
+                    if (b is not DoubleIota && b is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", b.ToString()));
+
+
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
@@ -270,14 +292,20 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
-                if ((a is NullIota || b is NullIota) || (a is not DoubleIota && b is not DoubleIota) && (a is not Vec3Iota && b is not Vec3Iota))
+                if((a is not DoubleIota && b is not DoubleIota) && (a is not Vec3Iota && b is not Vec3Iota))
                 {
-                    return new CastResult(
-                        new ListIota(new List<Iota>() { a, b }),
-                        stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                    if(a is not DoubleIota && a is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", a.ToString()));
+                    if (b is not DoubleIota && b is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", b.ToString()));
                 }
                 if (a is DoubleIota && b is DoubleIota)
                 {
@@ -328,12 +356,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
-                    return new CastResult(
-                        new ListIota(new List<Iota>() { a, b }),
-                        stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                    if (a is not DoubleIota && a is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", a.ToString()));
+                    if (b is not DoubleIota && b is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", b.ToString()));
+
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
@@ -369,8 +404,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { a }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota/BoolIota/ListIota", a.ToString()));
                     
                 }
                 return new CastResult(
@@ -405,12 +440,20 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else 
                 {
-                    return new CastResult(
-                        new ListIota(new List<Iota>() { a, b }),
-                        stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                    if (a is not DoubleIota && a is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", a.ToString()));
+                    if (b is not DoubleIota && b is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", b.ToString()));
+
+
                 }
                 return new CastResult(
                     new ListIota(new List<Iota>() { a, b }),
@@ -435,17 +478,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 else
                 {
                     return new CastResult(
-                    new ListIota(new List<Iota>() { a }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                        new ListIota(new List<Iota>() { a }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", a.ToString()));
+
                 }
 
                 return new CastResult(
-                new ListIota(new List<Iota>() { a }),
-                stack,
-                ResolvedPatternType.EVALUATED/*,
-                result.getSound()*/);
+                    new ListIota(new List<Iota>() { a }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
             }
         }
         public class Ceil : OperatorBase
@@ -464,17 +508,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 else
                 {
                     return new CastResult(
-                    new ListIota(new List<Iota>() { a }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                        new ListIota(new List<Iota>() { a }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", a.ToString()));
                 }
 
                 return new CastResult(
-                new ListIota(new List<Iota>() { a }),
-                stack,
-                ResolvedPatternType.EVALUATED/*,
-                result.getSound()*/);
+                    new ListIota(new List<Iota>() { a }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
             }
         }
         public class Sin : OperatorBase
@@ -485,18 +529,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 if (a is not DoubleIota)
                 {
                     return new CastResult(
-                    new ListIota(new List<Iota>() { a }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                        new ListIota(new List<Iota>() { a }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
                 }
                 stack.Push(new DoubleIota(Math.Sin(((DoubleIota)a).getDouble())));
 
                 return new CastResult(
-                new ListIota(new List<Iota>() { a }),
-                stack,
-                ResolvedPatternType.EVALUATED/*,
-                result.getSound()*/);
+                    new ListIota(new List<Iota>() { a }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
             }
         }
         public class Cos : OperatorBase
@@ -507,18 +551,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 if (a is not DoubleIota)
                 {
                     return new CastResult(
-                    new ListIota(new List<Iota>() { a }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                        new ListIota(new List<Iota>() { a }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
                 }
                 stack.Push(new DoubleIota(Math.Cos(((DoubleIota)a).getDouble())));
 
                 return new CastResult(
-                new ListIota(new List<Iota>() { a }),
-                stack,
-                ResolvedPatternType.EVALUATED/*,
-                result.getSound()*/);
+                    new ListIota(new List<Iota>() { a }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
             }
         }
         public class Tan : OperatorBase
@@ -529,18 +573,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 if (a is not DoubleIota)
                 {
                     return new CastResult(
-                    new ListIota(new List<Iota>() { a }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                        new ListIota(new List<Iota>() { a }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
                 }
                 stack.Push(new DoubleIota(Math.Tan(((DoubleIota)a).getDouble())));
 
                 return new CastResult(
-                new ListIota(new List<Iota>() { a }),
-                stack,
-                ResolvedPatternType.EVALUATED/*,
-                result.getSound()*/);
+                    new ListIota(new List<Iota>() { a }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
             }
         }
         public class Arcsin : OperatorBase
@@ -551,18 +595,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 if (a is not DoubleIota)
                 {
                     return new CastResult(
-                    new ListIota(new List<Iota>() { a }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                        new ListIota(new List<Iota>() { a }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
                 }
                 stack.Push(new DoubleIota(Math.Asin(((DoubleIota)a).getDouble())));
 
                 return new CastResult(
-                new ListIota(new List<Iota>() { a}),
-                stack,
-                ResolvedPatternType.EVALUATED/*,
-                result.getSound()*/);
+                    new ListIota(new List<Iota>() { a}),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
             }
         }
         public class Arccos : OperatorBase
@@ -573,18 +617,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 if (a is not DoubleIota)
                 {
                     return new CastResult(
-                    new ListIota(new List<Iota>() { a }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                        new ListIota(new List<Iota>() { a }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
                 }
                 stack.Push(new DoubleIota(Math.Acos(((DoubleIota)a).getDouble())));
 
                 return new CastResult(
-                new ListIota(new List<Iota>() { a }),
-                stack,
-                ResolvedPatternType.EVALUATED/*,
-                result.getSound()*/);
+                    new ListIota(new List<Iota>() { a }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
             }
         }
         public class ArcTan : OperatorBase
@@ -595,18 +639,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 if (a is not DoubleIota)
                 {
                     return new CastResult(
-                    new ListIota(new List<Iota>() { a }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                        new ListIota(new List<Iota>() { a }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
                 }
                 stack.Push(new DoubleIota(Math.Atan(((DoubleIota)a).getDouble())));
                 
                 return new CastResult(
-                new ListIota(new List<Iota>() { a }),
-                stack,
-                ResolvedPatternType.EVALUATED/*,
-                result.getSound()*/);
+                    new ListIota(new List<Iota>() { a }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
             }
         }
         public class ArcTan2 : OperatorBase
@@ -615,22 +659,26 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
-                if (a is not DoubleIota || b is not DoubleIota)
-                {
+                if (a is not DoubleIota)
                     return new CastResult(
-                    new ListIota(new List<Iota>() { a, b }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
-                }
+                        new ListIota(new List<Iota>() { a, b }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
+                if (b is not DoubleIota)
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { a, b }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", b.ToString()));
 
                 stack.Push(new DoubleIota(Math.Atan2(((DoubleIota)b).getDouble(), ((DoubleIota)a).getDouble())));
 
                 return new CastResult(
-                new ListIota(new List<Iota>() { a, b }),
-                stack,
-                ResolvedPatternType.EVALUATED/*,
-                result.getSound()*/);
+                    new ListIota(new List<Iota>() { a, b }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
             }
         }
         public class Log : OperatorBase
@@ -639,14 +687,19 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             {
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
-                if (a is not DoubleIota || b is not DoubleIota)
-                {
+                if (a is not DoubleIota)
                     return new CastResult(
-                    new ListIota(new List<Iota>() { a, b }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
-                }
+                        new ListIota(new List<Iota>() { a, b }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
+                if (b is not DoubleIota)
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { a, b }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", b.ToString()));
+
 
                 stack.Push(new DoubleIota(Math.Log(((DoubleIota)b).getDouble(), ((DoubleIota)a).getDouble())));
                 return new CastResult(
@@ -678,15 +731,23 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 {
                     stack.Push(new Vec3Iota(((Vec3Iota)b).getVec3().X % ((Vec3Iota)a).getVec3().X, ((Vec3Iota)b).getVec3().Y % ((Vec3Iota)a).getVec3().Y, ((Vec3Iota)b).getVec3().Z % ((Vec3Iota)a).getVec3().Z));
                 }
-                else { 
-                    return new CastResult(
-                    new ListIota(new List<Iota>() { a, b }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                else {
+                    if (a is not DoubleIota && a is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", a.ToString()));
+                    if (b is not DoubleIota && b is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota/Vec3Iota", b.ToString()));
+
                 }
 
-                
+
                 return new CastResult(
                     new ListIota(new List<Iota>() { a, b }),
                     stack,
@@ -705,14 +766,24 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
                 Iota c = stack.Pop();
-                if (a is not DoubleIota || b is not DoubleIota || c is not DoubleIota)
-                {
+                if (a is not DoubleIota)
                     return new CastResult(
-                    new ListIota(new List<Iota>() {a ,b ,c}),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
-                }
+                       new ListIota(new List<Iota>() { a, b, c }),
+                       stack,
+                       ResolvedPatternType.ERRORED,
+                       new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
+                if (b is not DoubleIota)
+                    return new CastResult(
+                       new ListIota(new List<Iota>() { a, b, c }),
+                       stack,
+                       ResolvedPatternType.ERRORED,
+                       new(QuickMishap.TypeMismatch, "DoubleIota", b.ToString()));
+                if (c is not DoubleIota)
+                    return new CastResult(
+                       new ListIota(new List<Iota>() { a, b, c }),
+                       stack,
+                       ResolvedPatternType.ERRORED,
+                       new(QuickMishap.TypeMismatch, "DoubleIota", c.ToString()));
 
                 stack.Push(new Vec3Iota(((DoubleIota)c).getDouble(), ((DoubleIota)b).getDouble() , ((DoubleIota)a).getDouble()));
                 return new CastResult(
@@ -727,13 +798,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota a = stack.Pop();
-                if (a is not DoubleIota)
+                if (a is not Vec3Iota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { a }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Vec3Iota", a.ToString()));
                 }
 
                 Vec3d v = ((Vec3Iota)a).getVec3();
@@ -742,10 +813,10 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 stack.Push(new DoubleIota(v.Y));
                 stack.Push(new DoubleIota(v.Z));
                 return new CastResult(
-                new ListIota(new List<Iota>() { a }),
-                stack,
-                ResolvedPatternType.EVALUATED/*,
-                result.getSound()*/);
+                    new ListIota(new List<Iota>() { a }),
+                    stack,
+                    ResolvedPatternType.EVALUATED/*,
+                    result.getSound()*/);
             }
         }
 
@@ -760,13 +831,21 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota num = stack.Pop();
                 Iota list = stack.Pop();
 
-                if (list is not ListIota || num is not DoubleIota)
+                if (list is not ListIota)
                 {
                     return new CastResult(
-                    new ListIota(new List<Iota>() { list , num }),
-                    stack,
-                    ResolvedPatternType.ERRORED/*,
-                    result.getSound()*/);
+                        new ListIota(new List<Iota>() { list , num }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
+                }
+                if (num is not DoubleIota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list , num }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", num.ToString()));
                 }
 
                 stack.Push(((ListIota)list).getList()[(int)((DoubleIota)num).getDouble()]);
@@ -786,13 +865,29 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota num1 = stack.Pop();
                 Iota list = stack.Pop();
 
-                if (list is not ListIota || num1 is not DoubleIota || num2 is not DoubleIota)
+                if (list is not ListIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { list, num1, num2 }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
+                }
+                if (num1 is not DoubleIota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list, num1, num2 }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", num1.ToString()));
+                }
+                if (num2 is not DoubleIota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list, num1, num2 }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", num2.ToString()));
                 }
 
                 stack.Push(new ListIota(((ListIota)list).getList().GetRange((int)((DoubleIota)num1).getDouble(), (int)((DoubleIota)num1).getDouble() +(int)((DoubleIota)num1).getDouble())));
@@ -811,14 +906,23 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota any = stack.Pop();
                 Iota list = stack.Pop();
 
+                if(any is GarbageIota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list, any }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", any.ToString()));
+                }
+
                 if (list is not ListIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { list, any }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
+
                 }
 
                 ((ListIota)list).getList().Add(any);
@@ -839,14 +943,23 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota list2 = stack.Pop();
                 Iota list1 = stack.Pop();
 
-                if (list1 is not ListIota || list2 is not ListIota)
+                if (list2 is not ListIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { list1, list2 }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list2.ToString()));
+
+                }
+                if (list1 is not ListIota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list1, list2 }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list1.ToString()));
+
                 }
 
                 ((ListIota)list1).getList().AddRange(((ListIota)list2).getList());
@@ -869,11 +982,11 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 if (list is not ListIota)
                 {
                     return new CastResult(
-                    new ListIota(new List<Iota>() { list }),
-                    stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        new ListIota(new List<Iota>() { list }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
+
                 }
 
                 ((ListIota)list).getList().Reverse();
@@ -894,14 +1007,23 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota any = stack.Pop();
                 Iota list = stack.Pop();
 
+                if(any is GarbageIota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list, any }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", any.ToString()));
+                }
+
                 if (list is not ListIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { list, any }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
+
                 }
 
                 stack.Push(new DoubleIota(((ListIota)list).getList().IndexOf(any)));
@@ -920,15 +1042,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota num = stack.Pop();
                 Iota list = stack.Pop();
 
-                if (list is not ListIota && num is not DoubleIota)
-                {
+                if (list is not ListIota )
                     return new CastResult(
                         new ListIota(new List<Iota>() { list, num }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
-                }
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
+                if ( num is not DoubleIota)
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list, num }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", num.ToString()));
 
                 ((ListIota)list).getList().RemoveAt((int)((DoubleIota)num).getDouble());
 
@@ -949,15 +1074,27 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota num = stack.Pop();
                 Iota list = stack.Pop();
 
-                if (list is not ListIota && num is not DoubleIota)
-                {
+                if(any is GarbageIota)
                     return new CastResult(
                         new ListIota(new List<Iota>() { list, num, any }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
-                }
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", any.ToString()));
+
+                if (list is not ListIota)
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list, num, any }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
+
+                if (num is not DoubleIota)
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list, num, any }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", num.ToString()));
+
 
                 ((ListIota)list).getList()[((int)((DoubleIota)num).getDouble())] = any;
 
@@ -975,15 +1112,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota num = stack.Pop();
-                if (num is not DoubleIota || ((int)((DoubleIota)num).getDouble())>= stack.stack.Count)
-                {
+                if (num is not DoubleIota )
                     return new CastResult(
                         new ListIota(new List<Iota>() { num }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
-                }
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", num.ToString()));
+                if ( ((int)((DoubleIota)num).getDouble())>= stack.stack.Count)
+                    return new CastResult(
+                            new ListIota(new List<Iota>() { num }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "Iota", "Garbage"));
 
                 ListIota acc = new ListIota(new List<Iota>());
 
@@ -1011,8 +1151,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { list }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
                     
                 }
 
@@ -1040,7 +1180,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     result.getSound()*/);
             }
         }
-#endregion
+        #endregion
 
         #region Boolian Logic,Comparisons, & Sets
 
@@ -1062,12 +1202,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
+                    if (a is not BoolIota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "BoolIota", a.ToString()));
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "BoolIota", b.ToString()));
                 }
             }
         }
@@ -1090,12 +1235,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
+                    if (a is not BoolIota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "BoolIota", a.ToString()));
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "BoolIota", b.ToString()));
+
                 }
             }
         }
@@ -1118,12 +1269,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
+                    if (a is not BoolIota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "BoolIota", a.ToString()));
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "BoolIota", b.ToString()));
+
                 }
             }
         }
@@ -1146,12 +1303,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
+                    if (a is not DoubleIota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", b.ToString()));
+
                 }
             }
         }
@@ -1174,12 +1337,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
+                    if (a is not DoubleIota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", b.ToString()));
+
                 }
             }
         }
@@ -1202,12 +1371,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
+                    if (a is not DoubleIota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", b.ToString()));
+
                 }
             }
         }
@@ -1230,12 +1405,18 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
+                    if (a is not DoubleIota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { a, b }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota", a.ToString()));
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
-                    
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", b.ToString()));
+
                 }
             }
         }
@@ -1325,8 +1506,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { Bool, any1, any2 }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "BoolIota", Bool.ToString()));
                     
                 }
             }
@@ -1352,6 +1533,16 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota list = stack.Pop();
+
+                if (list is not ListIota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
+
+                }
 
                 List<Iota> temp = new List<Iota>();
 
@@ -1385,8 +1576,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { list }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
                     
                 }
                 int listing = 0;
@@ -1432,13 +1623,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                         temp.Add(i);
                         
                     }
-                    else if (i is not PatternIota) //If eval, and can't
+                    else if (!i.executable()) //If eval, and can't
                     {
                         return new CastResult(
                             new ListIota(new List<Iota>() { list }),
                             stack,
-                            ResolvedPatternType.ERRORED/*,
-                            result.getSound()*/);
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.ExecuteInvalid, i.ToString()));
                         
                     }
                     else //If eval
@@ -1459,7 +1650,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                             {
                                 if (first)
                                 {
-                                    ((IServerPlayer)((EntityPlayer)player)?.Player)?.SendMessage(0, string.Format("<i><font color = \"{0}\">{1}</font></i>" ,castResult.resolutionType.colour.ToString("X6"), castResult.cast.ToString()), EnumChatType.Notification);
+                                    ((IServerPlayer)((EntityPlayer)player)?.Player)?.SendMessage(0, string.Format("<i><font color = \"{0}\">Pattern {2}: {1}</font></i>" ,castResult.resolutionType.colour.ToString("X6"), castResult.mishap.ToString(), stack.evals), EnumChatType.Notification);
                                 }
                                 return castResult;
                             }
@@ -1471,8 +1662,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { list }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.ExecuteListNotClosed));
                 }
 
 
@@ -1491,13 +1682,21 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             {
                 stack.stack.TryPop(out Iota list);
                 stack.stack.TryPop(out Iota Patterns);
-                if (list is not ListIota || Patterns is not ListIota)
+                if (list is not ListIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { list , Patterns }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", list.ToString()));
+                } 
+                else if(Patterns is not ListIota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { list, Patterns }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "ListIota", Patterns.ToString()));
                 }
 
                 foreach(Iota i in ((ListIota)list).getList())
@@ -1533,15 +1732,23 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 ItemStack Offhand = ((EntityPlayer)player)?.Player.InventoryManager?.OffhandHotbarSlot?.Itemstack;
                 if (Offhand is not null)
                 {
-                    stack.Push(((Focus)Offhand.Item)?.GetIota(Offhand));
+                    Iota o = ((Focus)Offhand.Item)?.GetIota(Offhand);
+                    if (o is null)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.LeftHandInvalid));
+
+                    stack.Push(o);
                 }
                 else
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.LeftHandEmpty));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { }),
@@ -1555,7 +1762,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             public override CastResult Run(Entity player, ICoreAPI api, State stack) 
             {
                 Iota Data = stack.Pop();
-                if (Data is not null)
+                if (Data is not GarbageIota)
                 {
                     if(Data is ListIota list)
                     {
@@ -1564,8 +1771,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                             return new CastResult(
                                  new ListIota(new List<Iota>() { Data }),
                                  stack,
-                                 ResolvedPatternType.ERRORED/*,
-                                 result.getSound()*/);
+                                 ResolvedPatternType.ERRORED,
+                                 new(QuickMishap.NotSaveable));
                         }
                     }
                     else if (Data is EntityIota entity)
@@ -1575,20 +1782,32 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                             return new CastResult(
                                  new ListIota(new List<Iota>() { Data }),
                                  stack,
-                                 ResolvedPatternType.ERRORED/*,
-                                 result.getSound()*/);
+                                 ResolvedPatternType.ERRORED,
+                                 new(QuickMishap.NotSaveable));
                         }
                     }
                     ItemStack Offhand = ((EntityPlayer)player)?.Player.InventoryManager?.OffhandHotbarSlot?.Itemstack;
-                    ((Focus)Offhand.Item)?.SetIota(Data, Offhand);
+                    Item I = Offhand?.Item;
+                    if (I is null) return new CastResult(
+                                    new ListIota(new List<Iota>() { Data }),
+                                    stack,
+                                    ResolvedPatternType.ERRORED,
+                                    new(QuickMishap.LeftHandEmpty));
+                    Focus f = (Focus)I;
+                    if(f is null) return new CastResult(
+                                    new ListIota(new List<Iota>() { Data }),
+                                    stack,
+                                    ResolvedPatternType.ERRORED,
+                                    new(QuickMishap.LeftHandInvalid));
+                    f.SetIota(Data, Offhand);
                 }
                 else
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { Data }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch,"Iota",Data.ToString()));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { Data }),
@@ -1626,8 +1845,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch,"EntityIota", e.ToString()));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { e }),
@@ -1650,8 +1869,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch,"EntityIota", e.ToString()));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { e }),
@@ -1681,8 +1900,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "EntityIota", e.ToString()));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { e }),
@@ -1721,11 +1940,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
+                    if(Dir is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { Start, Dir }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "Vec3Iota", Dir.ToString()));
                     return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Vec3Iota", Start.ToString()));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
@@ -1762,11 +1987,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
+                    if (Dir is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { Start, Dir }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "Vec3Iota", Dir.ToString()));
                     return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Vec3Iota", Start.ToString()));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
@@ -1803,11 +2034,17 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 }
                 else
                 {
+                    if (Dir is not Vec3Iota)
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { Start, Dir }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "Vec3Iota", Dir.ToString()));
                     return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Vec3Iota", Start.ToString()));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { Start, Dir }),
@@ -1824,7 +2061,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             {
                 Iota any = stack.Pop();
 
-                if (any is not null)
+                if (any is not GarbageIota)
                 {
                     ((IServerPlayer)((EntityPlayer)player)?.Player)?.SendMessage(0, any?.ToString(), EnumChatType.OwnMessage);
                     stack.Push(any);
@@ -1851,8 +2088,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "EntityIota", e.ToString()));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { e }),
@@ -1877,8 +2114,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "EntityIota", e.ToString()));
                 }
                 return new CastResult(
                         new ListIota(new List<Iota>() { e }),
@@ -1922,13 +2159,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
 
-                if ( a is null || b is null)
+                if ( a is GarbageIota || b is GarbageIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch,"Iota", "Garbage"));
                 }
 
                 stack.Push(a);
@@ -1950,13 +2187,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota b = stack.Pop();
                 Iota c = stack.Pop();
 
-                if (a is null || b is null || c is null)
+                if (a is GarbageIota || b is GarbageIota || c is GarbageIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b, c }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", "Garbage"));
                 }
 
                 stack.Push(b);
@@ -1980,13 +2217,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota b = stack.Pop();
                 Iota c = stack.Pop();
 
-                if (a is null || b is null || c is null)
+                if (a is GarbageIota || b is GarbageIota || c is GarbageIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b, c }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", "Garbage"));
                 }
 
                 stack.Push(a);
@@ -2009,13 +2246,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 Iota a = stack.Pop();
 
-                if (a is null )
+                if (a is GarbageIota)
                 {
                     return new CastResult(
-                        new ListIota(new List<Iota>() { a}),
+                        new ListIota(new List<Iota>() { a }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", "Garbage"));
                 }
 
                 stack.Push(a);
@@ -2038,13 +2275,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
 
-                if (a is null || b is null)
+                if (a is GarbageIota || b is GarbageIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", "Garbage"));
                 }
 
                 stack.Push(b);
@@ -2067,13 +2304,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
 
-                if (a is null || b is null)
+                if (a is GarbageIota || b is GarbageIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", "Garbage"));
                 }
 
                 stack.Push(a);
@@ -2096,13 +2333,22 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota num = stack.Pop();
                 Iota any = stack.Pop();
 
-                if (num is null || any is null || num is not DoubleIota)
+                if (num is not DoubleIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { num, any }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", num.ToString()));
+                }
+
+                if (any is GarbageIota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { num, any }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", any.ToString()));
                 }
 
                 for (int i = 0; i < ((DoubleIota)num).getDouble(); i++)
@@ -2127,13 +2373,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota a = stack.Pop();
                 Iota b = stack.Pop();
 
-                if (a is null || b is null)
+                if (a is GarbageIota || b is GarbageIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { a, b }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", "Garbage"));
+
                 }
 
                 stack.Push(b);
@@ -2171,14 +2418,24 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 Iota num = stack.Pop();
 
-                if (num is null  || num is not DoubleIota || ((DoubleIota)num).getDouble() > stack.stack.Count())
+                if (num is not DoubleIota )
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { num }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", num.ToString()));
                 }
+
+                if (((DoubleIota)num).getDouble() > stack.stack.Count())
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { num }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", "Garbage"));
+                }
+
                 if (((DoubleIota)num).getDouble() == 0)
                 {
                     return new CastResult(
@@ -2217,13 +2474,22 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 Iota num = stack.Pop();
 
-                if (num is null || num is not DoubleIota || ((DoubleIota)num).getDouble() > stack.stack.Count())
+                if (num is not DoubleIota)
                 {
                     return new CastResult(
                         new ListIota(new List<Iota>() { num }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "DoubleIota", num.ToString()));
+                }
+
+                if (((DoubleIota)num).getDouble() > stack.stack.Count())
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { num }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Iota", "Garbage"));
                 }
 
                 if (((DoubleIota)num).getDouble() == 0)
@@ -2405,6 +2671,15 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 bool suc = false;
 
+                if (e is not EntityIota && e is not Vec3Iota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { e }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "EntityIota/ Vec3Iota", e.ToString()));
+                }
+
                 if (e is EntityIota ent)
                 {
                     suc = stack.Shift().Effect(player, ent.getEntity());
@@ -2425,8 +2700,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.LowMedia));
                 }
             }
         }
@@ -2438,6 +2713,15 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                 Iota e = stack.Pop();
 
                 bool suc = false;
+
+                if(e is not Vec3Iota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { e }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Vec3Iota", e.ToString()));
+                }
 
                 if (e is Vec3Iota vec)
                 {
@@ -2455,8 +2739,8 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { e }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.LowMedia));
                 }
             }
         }
@@ -2466,12 +2750,28 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             {
                 Iota e = stack.Pop();
 
+
+                if (e is not Vec3Iota)
+                {
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { e }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.TypeMismatch, "Vec3Iota", e.ToString()));
+                }
+
                 bool suc = false;
 
                 if (e is Vec3Iota vec)
                 {
                     if (player.CanUseMedia(10 * ((float)stack.exp)))
                         suc = stack.Shift().Place(player, vec.getVec3());
+                    else
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { e, new DoubleIota(Math.Round(player.GetMedia(), 2)) }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.LowMedia));
                 }
                 if (suc)
                 {
@@ -2487,8 +2787,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { e, new DoubleIota(Math.Round(player.GetMedia(), 2))}),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED);
                 }
             }
         }
@@ -2501,8 +2800,14 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
 
                 if (player.CanUseMedia(stack.Shift().strength * 5 * ((float)stack.exp), stack.Shift().type, pain))
                     suc = stack.Shift().Project(player);
-                
-                
+                else
+                    return new CastResult(
+                        new ListIota(new List<Iota>() { new DoubleIota(Math.Round(player.GetMedia(), 2)) }),
+                        stack,
+                        ResolvedPatternType.ERRORED,
+                        new(QuickMishap.LowMedia));
+
+
                 if (suc)
                 {
                     player.UseMedia(stack.Shift().strength * 5 * ((float)stack.exp), stack.Shift().type, pain);
@@ -2517,8 +2822,7 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                     return new CastResult(
                         new ListIota(new List<Iota>() { new DoubleIota(Math.Round(player.GetMedia(),2)) }),
                         stack,
-                        ResolvedPatternType.ERRORED/*,
-                        result.getSound()*/);
+                        ResolvedPatternType.ERRORED);
                 }
             }
         }
@@ -2528,6 +2832,15 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
             public override CastResult Run(Entity player, ICoreAPI api, State stack)
             {
                 Iota e = stack.Pop();
+
+                if (e is not DoubleIota)
+                {
+                    return new CastResult(
+                            new ListIota(new List<Iota>() { new DoubleIota(Math.Round(player.GetMedia(), 2)) }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.TypeMismatch, "DoubleIota", e.ToString()));
+                }
 
                 bool suc = false;
 
@@ -2563,7 +2876,13 @@ namespace VSHexMod.hexcasting.api.casting.arithmetic.operators
                             }
                         }
                     }
-                        
+                    else
+                        return new CastResult(
+                            new ListIota(new List<Iota>() { new DoubleIota(Math.Round(player.GetMedia(), 2)) }),
+                            stack,
+                            ResolvedPatternType.ERRORED,
+                            new(QuickMishap.LowMedia));
+
                 }
 
                 if (suc)

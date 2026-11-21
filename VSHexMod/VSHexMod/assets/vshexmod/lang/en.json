@@ -7,5 +7,19 @@
 
   "item-focus-*": "Focus",
   "item-scroll-*": "Unnamed Spell",
-  "Scribebench": "Scribe Bench"
+  "Scribebench": "Scribe Bench",
+
+  "Mishap-Default": "Unknown Mishap, Please set this in your spell!",
+  "Mishap-TypeMismatch": "Hex expected type {0}, got {1}!",
+  "Mishap-LowMedia": "Insufficient Media!",
+
+  "Mishap-LeftHandEmpty": "Expected Item in offhand!",
+  "Mishap-LeftHandInvalid": "Item in offhand invalid for Hex!",
+  "Mishap-NotSaveable": "Not able to save others \"TrueName\" to focus!",
+
+  "Mishap-ExecuteError": "Tried to Execute {0}, It Crashed, I don't know why!",
+  "Mishap-ExecuteNotFound": "Tried to Execute {0}, No such match exists!",
+  "Mishap-ExecuteInvalid": "Tried to Execute {0}, Not a hexpattern!",
+  "Mishap-ExecuteListNotClosed": "Listing reached end of spell unclosed!",
+  "Mishap-ExecuteOverload": "Execution Limit Reached!"
 }
