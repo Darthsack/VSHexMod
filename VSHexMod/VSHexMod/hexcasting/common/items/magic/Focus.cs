@@ -49,18 +49,24 @@ namespace VSHexMod.hexcasting.common.items.magic
                 storedIota = new NullIota();
                 return storedIota;
             }
-            using (MemoryStream ms = new MemoryStream((byte[])IS.Attributes["iota"].GetValue()))
+            try
             {
-                using (BinaryReader reader = new BinaryReader(ms))
+                using (MemoryStream ms = new MemoryStream((byte[])IS.Attributes["iota"].GetValue()))
                 {
-                    Iota tmp = new();
-                    
-                    Iota output = tmp.FromBytes(reader, api.World);
+                    using (BinaryReader reader = new BinaryReader(ms))
+                    {
+                        Iota tmp = new();
 
-                    api.Logger.Notification(output.ToString());
-                    storedIota = output;
+                        Iota output = tmp.FromBytes(reader, api.World);
 
+                        api.Logger.Notification(output.ToString());
+                        storedIota = output;
+
+                    }
                 }
+            }
+            catch (Exception) {
+                storedIota = new NullIota();
             }
             return storedIota;
         }
